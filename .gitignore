@@ -8,6 +8,7 @@ config.status
 Makefile.in
 Makefile
 .deps
+m4
 
 # executables
 usbguard_notifier

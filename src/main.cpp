@@ -1,7 +1,13 @@
-#include <iostream>
+//#include "Library/IPC/Devices.pb.cc"
+#include "Log.hpp"
+#include "Notifier.hpp"
 
 int main()
 {
-    std::cout << "Hello World\n";
+    usbguardNotifier::Notifier notifier;
+
+    notifier.start();
+    while(1);
     return 0;
 }
+

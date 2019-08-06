@@ -15,12 +15,15 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AM_PROG_LIBTOOL
 
-CXXFLAGS =" -std=c++11"
-CXXFLAGS+=" -Wall"
-CXXFLAGS+=" -pedantic"
-CXXFLAGS+=" -Werror -pthread -lprotobuf -lpthread"
-CXXFLAGS+=" -lqb -ldl"
+PKG_CHECK_MODULES([protobuf], [protobuf >= 2.5.0],
+[protobuf_summary="system-wide; $protobuf_CFLAGS $protobuf_LIBS"],
+[AC_MSG_ERROR([Required protobuf development files not found!])]
+)
 
+AC_CHECK_PROGS(PROTOC, [protoc])
+if test -z "$PROTOC"; then
+  AC_MSG_ERROR(["Required protobuf compiler not found!"])
+fi
 
 AC_CONFIG_FILES(Makefile)
 

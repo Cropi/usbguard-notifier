@@ -9,9 +9,15 @@ Makefile.in
 Makefile
 .deps
 m4
+.dirstamp
+libtool
 
 # executables
 usbguard_notifier
+
+# protobuf generated files
+*.pb.cc
+*.pb.h
 
 # Compiled object files
 *.slo

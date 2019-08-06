@@ -4,12 +4,35 @@
 #include <string>
 #include <iostream>
 
+#include <google/protobuf/message.h>
+
 namespace usbguardNotifier
 {
     Notifier::Notifier()
     {
         _qb_loop = qb_loop_create();
+
+        //       createObserver(3, &Notifier::handleDeviceAvailabilityChanged);
+        createObserver<IPC::DevicePolicyChangedSignal>(4, &Notifier::handleDevicePolicyChanged);
     }
+
+    void Notifier::handleDevicePolicyChanged(IPC::MessagePointer& request, IPC::MessagePointer& response)
+    {
+        NOTIFIER_LOG() << "Handle device policy changed signal";
+
+        const IPC::DevicePolicyChangedSignal* const signal = \
+            reinterpret_cast<const IPC::DevicePolicyChangedSignal*>(request.get());
+
+        NOTIFIER_LOG() << "id=" << signal->id() << "  " << \
+            "device_rule=" << signal->device_rule() << "  " << \
+            "rule_id=" << signal->rule_id();
+
+    }
+
+//    void Notifier::handleDeviceAvailabilityChanged(IPC::MessagePointer& request, IPC::MessagePointer& response)
+//    {
+//        NOTIFIER_LOG() << "Handle device availability changed signal";
+//    }
 
     Notifier::~Notifier()
     {
@@ -23,7 +46,7 @@ namespace usbguardNotifier
         Notifier* notifier = static_cast<Notifier*>(data);
         Event event(notifier);
         event.process();
-        NOTIFIER_LOG() << "evenet finished";
+
         return 0;
     }
 
@@ -43,9 +66,7 @@ namespace usbguardNotifier
         }
 
         qb_loop_poll_add(_qb_loop, QB_LOOP_HIGH, _fd, POLLIN, this, qbIPCEventHappened);
-        NOTIFIER_LOG() << "Loop added";
         qb_loop_run(_qb_loop);
-        NOTIFIER_LOG() << "Loop is running";
     }
 
     void Notifier::stop()
@@ -56,6 +77,11 @@ namespace usbguardNotifier
     qb_ipcc_connection_t* Notifier::qbGetCon()
     {
         return _qb_conn;
+    }
+
+    std::map<uint32_t, MessageObserver> Notifier::getObservers()
+    {
+        return _observers;
     }
 
     Event::Event(Notifier *notifier)
@@ -74,11 +100,14 @@ namespace usbguardNotifier
             // TODO
         }
 
-        const int32_t msg_type = header->id - QB_IPC_MSG_USER_START;
-        const std::string msg = buffer.substr(sizeof(struct qb_ipc_response_header));
-        NOTIFIER_LOG() << "Type: " << msg_type << "Message: " << msg;
+        const int32_t request_type = header->id - QB_IPC_MSG_USER_START;
+        const std::string payload = buffer.substr(sizeof(struct qb_ipc_response_header));
+        NOTIFIER_LOG() << "Request type: " << request_type << "Message: " << payload;
 
-
+//        IPC::MessagePointer response;
+//        auto& observer = _notifier->getObservers().at(request_type);
+//        IPC::MessagePointer request = observer.stringToMessagePointer(payload);
+ //       observer.run(request, response);
     }
 
     std::string Event::rcvMessage()

@@ -4,15 +4,13 @@
 #include <string>
 #include <iostream>
 
-#include <google/protobuf/message.h>
-
 namespace usbguardNotifier
 {
     Notifier::Notifier()
     {
         _qb_loop = qb_loop_create();
 
-        //       createObserver(3, &Notifier::handleDeviceAvailabilityChanged);
+        createObserver<IPC::DevicePresenceChangedSignal>(3, &Notifier::handleDeviceAvailabilityChanged);
         createObserver<IPC::DevicePolicyChangedSignal>(4, &Notifier::handleDevicePolicyChanged);
     }
 
@@ -23,16 +21,31 @@ namespace usbguardNotifier
         const IPC::DevicePolicyChangedSignal* const signal = \
             reinterpret_cast<const IPC::DevicePolicyChangedSignal*>(request.get());
 
-        NOTIFIER_LOG() << "id=" << signal->id() << "  " << \
+        NOTIFIER_LOG() << \
+            "id=" << signal->id() << "  " << \
             "device_rule=" << signal->device_rule() << "  " << \
-            "rule_id=" << signal->rule_id();
+            "rule_id=" << signal->rule_id() << " " \
+            "target_old=" << IPC::targetToStr(signal->target_old()) << " " \
+            "target_new=" << IPC::targetToStr(signal->target_new());
 
+        // TODO
     }
 
-//    void Notifier::handleDeviceAvailabilityChanged(IPC::MessagePointer& request, IPC::MessagePointer& response)
-//    {
-//        NOTIFIER_LOG() << "Handle device availability changed signal";
-//    }
+    void Notifier::handleDeviceAvailabilityChanged(IPC::MessagePointer& request, IPC::MessagePointer& response)
+    {
+        NOTIFIER_LOG() << "Handle device availability changed signal";
+
+        const IPC::DevicePresenceChangedSignal* const signal = \
+            reinterpret_cast<const IPC::DevicePresenceChangedSignal*>(request.get());
+
+        NOTIFIER_LOG() << \
+            "id=" << signal->id() << " " << \
+            "event=" << signal->event() << " " << \
+            "target=" << IPC::targetToStr(signal->target()) << " " \
+            "device_rule" << signal->device_rule();
+
+        // TODO
+    }
 
     Notifier::~Notifier()
     {
@@ -104,10 +117,10 @@ namespace usbguardNotifier
         const std::string payload = buffer.substr(sizeof(struct qb_ipc_response_header));
         NOTIFIER_LOG() << "Request type: " << request_type << "Message: " << payload;
 
-//        IPC::MessagePointer response;
-//        auto& observer = _notifier->getObservers().at(request_type);
-//        IPC::MessagePointer request = observer.stringToMessagePointer(payload);
- //       observer.run(request, response);
+        IPC::MessagePointer response;
+        auto& observer = _notifier->getObservers().at(request_type);
+        IPC::MessagePointer request = observer.stringToMessagePointer(payload);
+        observer.run(request, response);
     }
 
     std::string Event::rcvMessage()
@@ -131,8 +144,6 @@ namespace usbguardNotifier
 
         return buffer;
     }
-
-
 } /* namespace usbguardNotifier */
 
 

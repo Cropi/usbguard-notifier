@@ -7,9 +7,12 @@ namespace usbguardNotifier
 {
     namespace IPC
     {
-        using MessagePointer = std::unique_ptr<google::protobuf::Message>;
+        using MessageType = google::protobuf::Message;
+        using MessagePointer = std::unique_ptr<MessageType>;
 
         uint32_t payloadTypeNameToNumber(std::string payload_type);
+
+        std::string targetToStr(const uint32_t target);
 
         template<class C>
         class MessageObserver
@@ -17,9 +20,10 @@ namespace usbguardNotifier
         public:
             using methodType = void (C::*)(MessagePointer&, MessagePointer&);
 
-            MessageObserver(C& c, methodType method)
+            MessageObserver(C& c, methodType method, const MessageType& factory)
                 : _c(c),
-                  _method(method)
+                  _method(method),
+                  _factory(factory)
             {
             }
 
@@ -30,14 +34,21 @@ namespace usbguardNotifier
 
             MessagePointer stringToMessagePointer(const std::string str)
             {
-                // TODO
-//              MessagePointer message();
-//              message->ParseFromString(str);
-                return nullptr;
+                MessagePointer message(_factory.New());
+                message->ParseFromString(str);
+                return message;
             }
+
+            template<class T>
+            static MessageObserver create(C& c, methodType method)
+            {
+                return MessageObserver(c, method, T::default_instance());
+            }
+
         private:
             C& _c;
             methodType _method;
+            const MessageType& _factory;
         };
     }
 } /* namespace  usbguardNotifier */

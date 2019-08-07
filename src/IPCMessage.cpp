@@ -1,10 +1,9 @@
 #include "IPCMessage.hpp"
 #include <map>
 
-
 namespace usbguardNotifier
 {
-    namespace IPCMessage
+    namespace IPC
     {
         static std::map<uint32_t, std::string> notifier_events {
             // TODO
@@ -14,8 +13,13 @@ namespace usbguardNotifier
 
         uint32_t payloadTypeNameToNumber(std::string payload_type)
         {
-            // TODO
+            //TODO
             return 1;
+        }
+
+        std::string targetToStr(const uint32_t target)
+        {
+            return target ? "block" : "allow";
         }
 
     }

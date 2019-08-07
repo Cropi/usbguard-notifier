@@ -1,5 +1,3 @@
-//#include "Library/IPC/Devices.pb.cc"
-#include "Log.hpp"
 #include "Notifier.hpp"
 
 int main()

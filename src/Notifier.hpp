@@ -28,8 +28,7 @@ namespace usbguardNotifier
         void createObserver(const uint32_t observer_type, MessageObserver::methodType method)
         {
             // TODO
-            std::string default_name = T::default_instance().GetTypeName();
-            _observers.emplace(observer_type, MessageObserver(*this, method ));
+            _observers.emplace(observer_type, MessageObserver::create<T>(*this, method));
         }
 
         void handleDevicePolicyChanged(IPC::MessagePointer& request, IPC::MessagePointer& response);

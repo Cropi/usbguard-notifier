@@ -31,19 +31,33 @@ PKG_CHECK_MODULES(
     [AC_MSG_FAILURE([libqb development files not found])]
 )
 
+# libnotify
+PKG_CHECK_MODULES(
+    [notify],
+    [libnotify >= 0.7.0],
+    [libnotify_summary="$notify_CFLAGS $notify_LIBS"],
+    [AC_MSG_FAILURE([libnotify development files not found])]
+)
+
 # usbguard
-AC_CHECK_PROGS(USBGUARD, [usbguard])
-if test -z "$USBGUARD"; then
-    AC_MSG_ERROR(["Required protobuf compiler not found!"])
-fi
+PKG_CHECK_MODULES(
+    [usbguard],
+    [libusbguard >= 0.7.2],
+    [libusbguard_summary="$usbguard_CFLAGS $usbguard_LIBS"],
+    [AC_MSG_FAILURE([libusbguard development files not found])]
+)
 
 # protoc
 AC_CHECK_PROGS(PROTOC, [protoc])
 if test -z "$PROTOC"; then
-  AC_MSG_ERROR(["Required protobuf compiler not found!"])
+  AC_MSG_ERROR(["Required protoc compiler not found!"])
 fi
-
 
 AC_CONFIG_FILES(Makefile)
 
 AC_OUTPUT
+
+echo "   protobuf: $protobuf_summary"
+echo "      libqb: $libqb_summary"
+echo "  libnotify: $libnotify_summary"
+echo "libusbguard: $libusbguard_summary"

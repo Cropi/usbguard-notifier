@@ -24,15 +24,15 @@ CLEANFILES+=$(proto_FILES)
 ACLOCAL_AMFLAGS+= -I m4
 
 usbguard_notifier_LDFLAGS=\
-	-lprotobuf \
-	-lpthread \
-	-lqb \
-	-ldl
+	@qb_LIBS@ \
+	@protobuf_LIBS@ \
+	@notify_LIBS@ \
+	@usbguard_LIBS@
 
 usbguard_notifier_CPFLAGS=\
 	-std=c++11 \
-	-Wall\
-	-pedantic\
-	-Werror\
-	-pthread\
-	-lprotoc
+	@qb_CFLAGS@ \
+	@protobuf_CFLAGS@ \
+	@notify_CFLAGS@ \
+	@usbguard_CFLAGS@
+

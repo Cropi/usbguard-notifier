@@ -25,3 +25,5 @@ usbguard_notifier
 *.o
 *.obj
 
+# systemd file
+usbguard_notifier.service.in

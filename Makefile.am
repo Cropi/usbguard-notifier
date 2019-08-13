@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS= -I m4
 
 bin_PROGRAMS = usbguard_notifier
 usbguard_notifier_SOURCES=\
-	src/main.cpp \
+	src/Main.cpp \
 	src/Log.cpp \
 	src/Log.hpp \
 	src/Notifier.hpp \

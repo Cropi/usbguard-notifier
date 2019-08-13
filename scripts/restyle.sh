@@ -11,11 +11,12 @@ OPTIONS="
 --indent-labels \
 --indent-col1-comments \
 --convert-tabs \
---delete-empty-lines \
 --attach-closing-while \
 --attach-return-type-decl \
 --break-one-line-headers \
 --add-braces \
+--align-pointer=type \
+--align-reference=type \
 --max-code-length=128 \
 --suffix=none
 "

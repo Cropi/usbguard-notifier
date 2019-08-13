@@ -1,13 +1,12 @@
 #include "Notifier.hpp"
 
-#include <usbguard/IPCClient.hpp>
-
 int main()
 {
-    usbguardNotifier::Notifier notifier;
+    usbguardNotifier::SignalWatcher n;
 
-    notifier.start();
-    while(1);
-    return 0;
+    n.connect();
+    n.wait();
+
+    return EXIT_SUCCESS;
 }
 

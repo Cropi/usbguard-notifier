@@ -25,3 +25,5 @@ usbguard_notifier
 *.o
 *.obj
 
+# sysmted
+usbguard_notifier.service

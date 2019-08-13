@@ -53,11 +53,28 @@ if test -z "$PROTOC"; then
   AC_MSG_ERROR(["Required protoc compiler not found!"])
 fi
 
+
+# systemd
+systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemdsystemunitdir`"
+if test "x$systemd_unit_dir" = x; then
+    AC_MSG_FAILURE([Cannot detect the systemd system unit dir])
+fi
+AC_SUBST(SYSTEMD_UNIT_DIR, $systemd_unit_dir)
+AC_DEFINE([SYSTEMD_SUPPORT_ENABLED], [1], [Enable systemd support int the project])
+AM_CONDITIONAL([SYSTEMD_SUPPORT_ENABLED], [test "x$systemd" = xyes ])
+
+
 AC_CONFIG_FILES(Makefile)
 
 AC_OUTPUT
 
+echo ""
+echo "========== MACROS =============="
+echo "    systemd: $systemd_unit_dir"
+echo ""
+echo "======== LINKER OPTIONS ========"
 echo "   protobuf: $protobuf_summary"
 echo "      libqb: $libqb_summary"
 echo "  libnotify: $libnotify_summary"
 echo "libusbguard: $libusbguard_summary"
+echo ""

@@ -26,8 +26,8 @@ int main(int argc, char** argv)
     int opt;
     bool wait_connection = false;
 
-    while((opt = getopt_long(argc, argv, short_options, long_options, nullptr)) != EOF) {
-        switch(opt) {
+    while ((opt = getopt_long(argc, argv, short_options, long_options, nullptr)) != EOF) {
+        switch (opt) {
         case 'w':
             wait_connection = true;
             break;
@@ -46,13 +46,14 @@ int main(int argc, char** argv)
     }
 
     usbguardNotifier::SignalWatcher notifier;
-    while(1) {
+    while (1) {
         try {
             notifier.connect();
             notifier.wait();
         } catch (const usbguard::Exception& e) {
-            if (wait_connection)
+            if (wait_connection) {
                 continue;
+            }
 
             std::cerr << "IPC connection failure!" << e.message() << std::endl;
             std::cerr << "Check if usbguard-daemon is running in the background" << std::endl;

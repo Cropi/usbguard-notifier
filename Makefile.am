@@ -1,38 +1,20 @@
 CLEANFILES=
-ACLOCAL_AMFLAGS=
+ACLOCAL_AMFLAGS= -I m4
 
 bin_PROGRAMS = usbguard_notifier
 usbguard_notifier_SOURCES=\
-	$(proto_FILES) \
 	src/main.cpp \
 	src/Log.cpp \
 	src/Log.hpp \
 	src/Notifier.hpp \
-	src/Notifier.cpp \
-	src/IPCMessage.hpp \
-	src/IPCMessage.cpp
-
-proto_FILES=\
-	src/Library/IPC/Devices.pb.h \
-	src/Library/IPC/Devices.pb.cc
-
-CLEANFILES+=$(proto_FILES)
-
-%.pb.cc %.pb.h: %.proto
-	$(PROTOC) --cpp_out=. $^
-
-ACLOCAL_AMFLAGS+= -I m4
+	src/Notifier.cpp
 
 usbguard_notifier_LDFLAGS=\
-	@qb_LIBS@ \
-	@protobuf_LIBS@ \
 	@notify_LIBS@ \
 	@usbguard_LIBS@
 
 usbguard_notifier_CPFLAGS=\
 	-std=c++11 \
-	@qb_CFLAGS@ \
-	@protobuf_CFLAGS@ \
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 

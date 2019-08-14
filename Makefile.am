@@ -13,8 +13,7 @@ usbguard_notifier_LDFLAGS=\
 	@notify_LIBS@ \
 	@usbguard_LIBS@
 
-usbguard_notifier_CPFLAGS=\
-	-std=c++11 \
+usbguard_notifier_CXXFLAGS=\
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 

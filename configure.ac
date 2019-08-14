@@ -15,6 +15,20 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AM_PROG_LIBTOOL
 
+# Check for headers, typedefs, data structures
+AC_CHECK_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT64_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
+
+AC_CHECK_HEADERS([getopt.h unistd.h ] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
+
+
 # protobuf
 PKG_CHECK_MODULES(
     [protobuf],
@@ -63,6 +77,15 @@ AC_SUBST(SYSTEMD_UNIT_DIR, $systemd_unit_dir)
 AC_DEFINE([SYSTEMD_SUPPORT_ENABLED], [1], [Enable systemd support int the project])
 AM_CONDITIONAL([SYSTEMD_SUPPORT_ENABLED], [test "x$systemd" = xyes ])
 
+CXXFLAGS=
+CXXFLAGS+=" -std=c++11"
+CXXFLAGS+=" -pedantic"
+CXXFLAGS+=" -Wno-unknown-pragmas"
+CXXFLAGS+=" -Wall"
+CXXFLAGS+=" -Wextra"
+CXXFLAGS+=" -Wmissing-declarations"
+
+AC_SUBST(CPPFLAGS, $CXXFLAGS)
 
 AC_CONFIG_FILES(Makefile)
 

@@ -1,12 +1,18 @@
-#include <iostream>
+#ifndef NOTIFIER_HPP
+#define NOTIFIER_HPP
+
+#include "NotifyWrapper.hpp"
 
 #include <usbguard/IPCClient.hpp>
 
 namespace usbguardNotifier
 {
-class SignalWatcher : public usbguard::IPCClient
+
+class Notifier : public usbguard::IPCClient
 {
 public:
+    explicit Notifier(const std::string& appName)
+        : _lib(appName) {}
 
     void DevicePolicyChanged(
         uint32_t id,
@@ -25,6 +31,10 @@ public:
         const std::string& name,
         const std::string& value_old,
         const std::string& value_new);
+
+private:
+    notify::Notify _lib;
 };
 
 } /* namespace usbguardNotifier */
+#endif /* NOTIFIER_HPP */

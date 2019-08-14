@@ -1,7 +1,7 @@
 #ifndef NOTIFY_WRAPPER_HPP
 #define NOTIFY_WRAPPER_HPP
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
 #include <libnotify/notify.h>

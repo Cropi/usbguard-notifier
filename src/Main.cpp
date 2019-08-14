@@ -45,7 +45,7 @@ int main(int argc, char** argv)
         }
     }
 
-    usbguardNotifier::SignalWatcher notifier;
+    usbguardNotifier::Notifier notifier("usbguard-notifier");
     while (1) {
         try {
             notifier.connect();

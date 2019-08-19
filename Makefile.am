@@ -17,6 +17,11 @@ usbguard_notifier_CXXFLAGS=\
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 
+CPPFLAGS+=-DICON_PATH=file://$(datadir)/usbguard-notifier/usbguard-icon.svg
+
+appicondir=$(datadir)/usbguard-notifier
+appicon_DATA=icons/usbguard-icon.svg
+
 install-data-hook: install-systemd-service
 uninstall-hook: uninstall-systemd-service
 

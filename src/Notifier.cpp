@@ -8,7 +8,6 @@
 #include <string>
 #include <iostream> // TODO remove
 
-
 namespace usbguardNotifier
 {
 
@@ -28,8 +27,7 @@ void Notifier::DevicePolicyChanged(
     std::ostringstream body;
     body << rule.getName() << ": " << targetNewStr;
 
-    // TODO add icon
-    notify::Notification n("USBGuard", body.str()/*, "file:///usr/share/usbguard-icon.png"*/);
+    notify::Notification n("USBGuard", body.str(), ICON_PATH);
     if (!n.show()) {
         // TODO throw exception
     }
@@ -51,8 +49,7 @@ void Notifier::DevicePresenceChanged(
     std::ostringstream body;
     body << eventStr << ' ' << rule.getName() << ": " << targetStr;
 
-    // TODO add icon
-    notify::Notification n("USBGuard", body.str()/*, "file:///usr/share/usbguard-icon.png"*/);
+    notify::Notification n("USBGuard", body.str(), ICON_PATH);
     n.setTimeout(5000);
     n.setCategory("device");
     if (!n.show()) {

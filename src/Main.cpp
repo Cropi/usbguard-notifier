@@ -31,15 +31,12 @@ int main(int argc, char** argv)
         case 'w':
             wait_connection = true;
             break;
-
         case 'h':
-            showHelp(argc, argv, std::cout);
-            break;
-
+            showHelp(argc, argv, std::cerr);
+            return EXIT_SUCCESS;
         case '?':
             showHelp(argc, argv, std::cerr);
-            break;
-
+            return EXIT_FAILURE;
         default:
             return EXIT_FAILURE;
         }

@@ -70,7 +70,7 @@ if test -z "$PROTOC"; then
 fi
 
 # systemd
-systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemdsystemunitdir`"
+systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemduserunitdir`"
 if test "x$systemd_unit_dir" = x; then
     AC_MSG_FAILURE([Cannot detect the systemd system unit dir])
 fi

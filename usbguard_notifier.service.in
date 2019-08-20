@@ -3,8 +3,7 @@ Description=USBGuard Notificator
 After=usbguard.service
 
 [Service]
-ExecStart=/usr/local/sbin/usbguard_notifier
+ExecStart=%bindir%/usbguard_notifier
 
 [Install]
-WantedBy=basic.target
-
+WantedBy=default.target

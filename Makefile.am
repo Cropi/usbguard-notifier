@@ -1,7 +1,7 @@
 CLEANFILES=
 ACLOCAL_AMFLAGS= -I m4
 
-sbin_PROGRAMS = usbguard_notifier
+bin_PROGRAMS = usbguard_notifier
 usbguard_notifier_SOURCES=\
 	src/Main.cpp \
 	src/Log.cpp \
@@ -24,7 +24,7 @@ install-data-hook: install-systemd-service
 uninstall-hook: uninstall-systemd-service
 
 usbguard_notifier.service: $(top_srcdir)/usbguard_notifier.service.in
-		$(SED) -e "s|%sbindir%|${sbindir}|" -e "s|%sysconfdir%|${sysconfdir}|" $^ > $@ || rm -f $@
+		$(SED) -e "s|%bindir%|${sbindir}|" $^ > $@ || rm -f $@
 
 CLEANFILES+=usbguard_notifier.service
 

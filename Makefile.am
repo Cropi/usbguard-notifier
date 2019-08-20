@@ -5,8 +5,6 @@ sbin_PROGRAMS = usbguard_notifier
 usbguard_notifier_SOURCES=\
 	src/Main.cpp \
 	src/Log.cpp \
-	src/Log.hpp \
-	src/Notifier.hpp \
 	src/Notifier.cpp
 
 usbguard_notifier_LDFLAGS=\
@@ -17,7 +15,7 @@ usbguard_notifier_CXXFLAGS=\
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 
-CPPFLAGS+=-DICON_PATH=file://$(datadir)/usbguard-notifier/usbguard-icon.svg
+DEFS+=-DICON_PATH=\"file://$(datadir)/usbguard-notifier/usbguard-icon.svg\"
 
 appicondir=$(datadir)/usbguard-notifier
 appicon_DATA=icons/usbguard-icon.svg

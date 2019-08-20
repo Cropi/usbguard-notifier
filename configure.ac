@@ -31,7 +31,6 @@ AC_TYPE_UINT8_T
 
 AC_CHECK_HEADERS([getopt.h unistd.h ] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
-
 # protobuf
 PKG_CHECK_MODULES(
     [protobuf],
@@ -69,7 +68,6 @@ AC_CHECK_PROGS(PROTOC, [protoc])
 if test -z "$PROTOC"; then
   AC_MSG_ERROR(["Required protoc compiler not found!"])
 fi
-
 
 # systemd
 systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemdsystemunitdir`"

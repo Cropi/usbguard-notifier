@@ -1,3 +1,4 @@
+
 #ifndef NOTIFY_WRAPPER_HPP
 #define NOTIFY_WRAPPER_HPP
 
@@ -5,6 +6,10 @@
 #include <string>
 
 #include <libnotify/notify.h>
+#include <librsvg-2.0/librsvg/rsvg.h>
+
+extern char _binary_icons_usbguard_icon_svg_start [];
+extern char _binary_icons_usbguard_icon_svg_end[];
 
 namespace notify
 {
@@ -18,7 +23,7 @@ public:
     explicit Notify(const std::string& appName)
     {
         if (!notify_init(appName.c_str())) {
-            throw std::runtime_error("Failed to initialize libnotify");
+          throw std::runtime_error("Failed to initialize libnotify");
         }
     }
     Notify(const Notify&) = delete;
@@ -52,10 +57,27 @@ public:
      *
      * @param summary The required summary text.
      * @param body The optional body text.
-     * @param icon The optional icon, theme, icon name or filename.
      */
-    Notification(const std::string& summary, const std::string& body = "", const std::string& icon = "")
-        : _n(notify_notification_new(summary.c_str(), body.c_str(), icon.c_str())) {}
+    Notification(const std::string& summary, const std::string& body = "")
+      : _n(notify_notification_new(summary.c_str(), body.c_str(), nullptr)) {
+
+      RsvgHandle* handle = rsvg_handle_new_from_data(
+                                                     (const guint8*)(_binary_icons_usbguard_icon_svg_start),
+                                                     _binary_icons_usbguard_icon_svg_end - _binary_icons_usbguard_icon_svg_start,
+                                                     nullptr
+                                                     );
+      if (!handle) {
+        throw std::runtime_error("Failed to get handle");
+      }
+
+      //rsvg_handle_set_dpi(handle, 10.0);
+
+      GdkPixbuf * pix = rsvg_handle_get_pixbuf(handle);
+        // ("/home/rsroka/share/usbguard-notifier/usbguard-icon.svg",100, 100, nullptr);
+      //rsvg_handle_close(handle, nullptr);
+      notify_notification_set_image_from_pixbuf(_n, pix);
+      g_object_unref(handle);
+    }
 
     Notification(const Notification&) = delete;
     Notification& operator=(const Notification&) = delete;
@@ -68,12 +90,11 @@ public:
      *
      * @param summary The new required summary text.
      * @param body The optional body text.
-     * @param icon The optional icon, theme, icon name or filename.
      * @return True, unless an invalid parameter was passed.
      */
-    bool update(const std::string& summary, const std::string& body = "", const std::string& icon = "")
+    bool update(const std::string& summary, const std::string& body = "")
     {
-        return notify_notification_update(_n, summary.c_str(), body.c_str(), icon.c_str());
+      return notify_notification_update(_n, summary.c_str(), body.c_str(), nullptr);
     }
 
     /**

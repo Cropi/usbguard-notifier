@@ -27,7 +27,7 @@ void Notifier::DevicePolicyChanged(
     std::ostringstream body;
     body << rule.getName() << ": " << targetNewStr;
 
-    notify::Notification n("USBGuard", body.str(), ICON_PATH);
+    notify::Notification n("USBGuard", body.str());
     if (!n.show()) {
         // TODO throw exception
     }
@@ -49,7 +49,7 @@ void Notifier::DevicePresenceChanged(
     std::ostringstream body;
     body << eventStr << ' ' << rule.getName() << ": " << targetStr;
 
-    notify::Notification n("USBGuard", body.str(), ICON_PATH);
+    notify::Notification n("USBGuard", body.str());
     n.setTimeout(5000);
     n.setCategory("device");
     if (!n.show()) {

@@ -29,7 +29,7 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_CHECK_HEADERS([getopt.h unistd.h ] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
+AC_CHECK_HEADERS([getopt.h unistd.h] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
 # protobuf
 PKG_CHECK_MODULES(

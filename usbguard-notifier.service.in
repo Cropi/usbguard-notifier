@@ -1,9 +1,9 @@
 [Unit]
-Description=USBGuard Notificator
+Description=USBGuard Notifier
 After=usbguard.service
 
 [Service]
-ExecStart=%bindir%/usbguard_notifier
+ExecStart=%bindir%/usbguard-notifier
 
 [Install]
 WantedBy=default.target

@@ -6,16 +6,16 @@
 #include <usbguard/DeviceManager.hpp>
 
 #include <string>
-#include <iostream> // TODO remove
+#include <iostream>
 
 namespace usbguardNotifier
 {
 
 void Notifier::DevicePolicyChanged(
-    uint32_t id,
+    uint32_t /*id*/,
     usbguard::Rule::Target target_old, usbguard::Rule::Target target_new,
     const std::string& device_rule,
-    uint32_t rule_id)
+    uint32_t /*rule_id*/)
 {
     NOTIFIER_LOG() << "Device policy changed signal";
     using namespace usbguard;
@@ -34,7 +34,7 @@ void Notifier::DevicePolicyChanged(
 }
 
 void Notifier::DevicePresenceChanged(
-    uint32_t id,
+    uint32_t /*id*/,
     usbguard::DeviceManager::EventType event,
     usbguard::Rule::Target target,
     const std::string& device_rule)
@@ -58,9 +58,9 @@ void Notifier::DevicePresenceChanged(
 }
 
 void Notifier::PropertyParameterChanged(
-    const std::string& name,
-    const std::string& value_old,
-    const std::string& value_new)
+    const std::string& /*name*/,
+    const std::string& /*value_old*/,
+    const std::string& /*value_new*/)
 {
     NOTIFIER_LOG() << "Property parameter changed signal";
     // TODO

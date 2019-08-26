@@ -28,7 +28,7 @@ $  ./autogen.sh
 $  ./configure --prefix /home/$(id -un)
 $  make
 $  make install SYSTEMD_UNIT_DIR=/home/$(id -un)/.config/systemd/user/
-$  systemctl enable --now --user usbguard_notifier.service
+$  systemctl enable --now --user usbguard-notifier.service
 ```
 * system wide
 ```
@@ -36,7 +36,7 @@ $  ./autogen.sh
 $  ./configure --prefix /usr
 $  make
 $  sudo make install
-$  systemctl enable --now --user usbguard_notifier.service
+$  systemctl enable --now --user usbguard-notifier.service
 ```
 
 ### Note

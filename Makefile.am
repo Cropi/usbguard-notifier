@@ -19,10 +19,25 @@ usbguard_notifier_CXXFLAGS = \
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 
-DEFS+=-DICON_PATH=\"file://$(datadir)/usbguard-notifier/usbguard-icon.svg\"
+# manual pages
 
-appicondir=$(datadir)/usbguard-notifier
-appicon_DATA=icons/usbguard-icon.svg
+SUFFIXES = .adoc
+
+.adoc: 
+	$(A2X) -f manpage $^
+
+man1_MANS = \
+	$(top_builddir)/man/usbguard-notifier.1 \
+	$(top_builddir)/man/usbguard-notifier-cli.1
+
+# usbguard icon
+
+DEFS += -DICON_PATH=\"file://$(datadir)/usbguard-notifier/usbguard-icon.svg\"
+
+appicondir = $(datadir)/usbguard-notifier
+appicon_DATA = icons/usbguard-icon.svg
+
+# unit file
 
 install-data-hook: install-systemd-service
 uninstall-hook: uninstall-systemd-service

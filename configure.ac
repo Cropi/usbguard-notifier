@@ -69,6 +69,12 @@ if test -z "$PROTOC"; then
   AC_MSG_ERROR(["Required protoc compiler not found!"])
 fi
 
+# asciidoc
+AC_CHECK_PROGS(A2X, [a2x])
+if test -z "$A2X"; then
+  AC_MSG_FAILURE([Cannot detect documentation generator (asciidoc / a2x)])
+fi
+
 # systemd
 systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemduserunitdir`"
 if test "x$systemd_unit_dir" = x; then

@@ -90,7 +90,6 @@ CXXFLAGS+=" -pedantic"
 CXXFLAGS+=" -Wno-unknown-pragmas"
 CXXFLAGS+=" -Wall"
 CXXFLAGS+=" -Wextra"
-CXXFLAGS+=" -Wmissing-declarations"
 
 AC_SUBST(CPPFLAGS, $CXXFLAGS)
 

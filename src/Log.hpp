@@ -1,9 +1,13 @@
+#ifndef LOG_HPP
+#define LOG_HPP
+
 #include <string>
 #include <sstream>
 #include <fstream>
 
 namespace usbguardNotifier
 {
+
 class LoggerStream;
 class Logger
 {
@@ -38,3 +42,5 @@ extern Logger g_nLog;
     usbguardNotifier::g_nLog.createLogMessage(__BASE_FILE__, __func__, __LINE__)
 
 } /* namespace usbguard-notifier */
+
+#endif

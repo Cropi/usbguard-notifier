@@ -1,0 +1,25 @@
+usbguard-notifier-cli(1)
+========================
+:doctype: manpage
+
+
+== NAME
+usbguard-notifier-cli - USBGuard Notifier command-line interface
+
+
+== SYNOPSIS
+
+usbguard-notifier [OPTIONS]
+
+
+== DESCRIPTION
+TODO
+
+== OPTIONS
+TODO
+
+== SEE ALSO
+link:usbguard-notifier.1.adoc#name[usbguard-notifier(1)]
+
+
+include::footer.adoc[]

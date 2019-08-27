@@ -1,0 +1,31 @@
+usbguard-notifier(1)
+====================
+:doctype: manpage
+
+
+== NAME
+usbguard-notifier - provides user-friendly notifications for USBGuard
+
+
+== SYNOPSIS
+
+usbguard-notifier [OPTIONS]
+
+
+== DESCRIPTION
+USBGuard Notifier is a software framework mainly for detecting usbguard policy modifications as well as device presence changes. The purpose of this project is to create user-friendly notifications in form of quick pop-up messages.
+
+
+== OPTIONS
+*-w, --wait*::
+    Wait until an active IPC connection is estabilished.
+
+*-h, --help*::
+    Show help.
+
+
+== SEE ALSO
+link:usbguard-notifier-cli.1.adoc#name[usbguard-notifier-cli(1)],
+
+
+include::footer.adoc[]

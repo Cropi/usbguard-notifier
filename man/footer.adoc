@@ -1,0 +1,17 @@
+== BUGS
+If you find a bug in this software or if you'd like to request a feature to be implemented, please file a ticket at <https://github.com/Cropi/usbguard-notifier/issues/new>.
+
+
+== AUTHOR
+USBGuard Notifier was written by Zoltán Fridrich and Attila Lakatoš.
+
+
+== RESOURCES
+Main web site: <https://usbguard.github.io/>
+
+
+== COPYING
+Copyright © 2015-{docyear} Red Hat, Inc. +
+License GPLv2+: GNU GPL version 2 or later http://gnu.org/licenses/gpl.html. +
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.

@@ -36,5 +36,6 @@ private:
     notify::Notify _lib;
 };
 
-} /* namespace usbguardNotifier */
-#endif /* NOTIFIER_HPP */
+} // namespace usbguardNotifier
+
+#endif // NOTIFIER_HPP

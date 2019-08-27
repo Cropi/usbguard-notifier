@@ -9,13 +9,16 @@ usbguard_notifier_SOURCES = \
 	src/Log.hpp \
 	src/Main.cpp \
 	src/Notifier.cpp \
-	src/Log.cpp
+	src/Log.cpp \
+	icons/usbguard-icon.svg
 
 usbguard_notifier_LDFLAGS = \
+	@rsvg_LIBS@ \
 	@notify_LIBS@ \
 	@usbguard_LIBS@
 
 usbguard_notifier_CXXFLAGS = \
+	@rsvg_CFLAGS@ \
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 
@@ -32,10 +35,8 @@ man1_MANS = \
 
 # usbguard icon
 
-DEFS += -DICON_PATH=\"file://$(datadir)/usbguard-notifier/usbguard-icon.svg\"
-
-appicondir = $(datadir)/usbguard-notifier
-appicon_DATA = icons/usbguard-icon.svg
+.svg.o:
+	$(LD) -r -b binary -o $@ $<
 
 # unit file
 
@@ -45,12 +46,12 @@ uninstall-hook: uninstall-systemd-service
 CLEANFILES += $(top_builddir)/usbguard-notifier.service
 
 usbguard-notifier.service: $(top_srcdir)/usbguard-notifier.service.in
-		$(SED) -e "s|%bindir%|${bindir}|" $^ > $@ || rm -f $@
+	$(SED) -e "s|%bindir%|${bindir}|" $^ > $@ || rm -f $@
 
 install-systemd-service: $(top_builddir)/usbguard-notifier.service
-		$(MKDIR_P) $(DESTDIR)$(SYSTEMD_UNIT_DIR)
-		$(INSTALL) -m 644 $(top_builddir)/usbguard-notifier.service \
-		$(DESTDIR)$(SYSTEMD_UNIT_DIR)/usbguard-notifier.service
+	$(MKDIR_P) $(DESTDIR)$(SYSTEMD_UNIT_DIR)
+	$(INSTALL) -m 644 $(top_builddir)/usbguard-notifier.service \
+	$(DESTDIR)$(SYSTEMD_UNIT_DIR)/usbguard-notifier.service
 
 uninstall-systemd-service:
-		rm -f $(DESTDIR)$(SYSTEMD_UNIT_DIR)/usbguard-notifier.service
+	rm -f $(DESTDIR)$(SYSTEMD_UNIT_DIR)/usbguard-notifier.service

@@ -47,6 +47,14 @@ PKG_CHECK_MODULES(
     [AC_MSG_FAILURE([libqb development files not found])]
 )
 
+# librsvg2
+PKG_CHECK_MODULES(
+    [rsvg],
+    [librsvg-2.0 >= 2.0.0],
+    [librsvg-2.0_summary="$rsvg_CFLAGS $rsvg_LIBS"],
+    [AC_MSG_FAILURE([librsvg2 development files not found])]
+)
+
 # libnotify
 PKG_CHECK_MODULES(
     [notify],

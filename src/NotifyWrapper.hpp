@@ -5,6 +5,11 @@
 #include <string>
 
 #include <libnotify/notify.h>
+#include <librsvg-2.0/librsvg/rsvg.h>
+
+// Binary representation of the USBGuard icon.
+extern char _binary_icons_usbguard_icon_svg_start[];
+extern char _binary_icons_usbguard_icon_svg_end[];
 
 namespace notify
 {
@@ -47,33 +52,43 @@ class Notification
 {
 public:
     /**
-     * @brief Creates a new Notification.
+     * @brief Creates a new Notification with USBGuard icon.
      * The summary text is required, but all other parameters are optional.
      *
      * @param summary The required summary text.
      * @param body The optional body text.
-     * @param icon The optional icon, theme, icon name or filename.
      */
-    Notification(const std::string& summary, const std::string& body = "", const std::string& icon = "")
-        : _n(notify_notification_new(summary.c_str(), body.c_str(), icon.c_str())) {}
+    Notification(const std::string& summary, const std::string& body = "")
+        : _n(notify_notification_new(summary.c_str(), body.c_str(), nullptr))
+    {
+        RsvgHandle* handle = rsvg_handle_new_from_data(
+                (const guint8*)(_binary_icons_usbguard_icon_svg_start),
+                _binary_icons_usbguard_icon_svg_end - _binary_icons_usbguard_icon_svg_start,
+                nullptr);
+        if (!handle) {
+            throw std::runtime_error("Failed to obtain rsvg handle");
+        }
+        GdkPixbuf* pixbuf = rsvg_handle_get_pixbuf(handle);
+        notify_notification_set_image_from_pixbuf(_n, pixbuf);
+        g_object_unref(handle);
+    }
 
     Notification(const Notification&) = delete;
     Notification& operator=(const Notification&) = delete;
     ~Notification() = default;
 
     /**
-     * @brief Updates the notification text and icon.
+     * @brief Updates the notification text.
      * This won't send the update out and display it on the screen.
      * For that, you will need to call show().
      *
      * @param summary The new required summary text.
      * @param body The optional body text.
-     * @param icon The optional icon, theme, icon name or filename.
      * @return True, unless an invalid parameter was passed.
      */
-    bool update(const std::string& summary, const std::string& body = "", const std::string& icon = "")
+    bool update(const std::string& summary, const std::string& body = "")
     {
-        return notify_notification_update(_n, summary.c_str(), body.c_str(), icon.c_str());
+        return notify_notification_update(_n, summary.c_str(), body.c_str(), nullptr);
     }
 
     /**
@@ -118,5 +133,6 @@ private:
     NotifyNotification* _n;
 };
 
-} /* namespace notify */
-#endif /* NOTIFY_WRAPPER_HPP */
+} // namespace notify
+
+#endif // NOTIFY_WRAPPER_HPP

@@ -12,8 +12,11 @@ class LoggerStream;
 class Logger
 {
 public:
-    Logger();
+    Logger(bool debug = false);
     LoggerStream createLogMessage(const std::string& file, const std::string& function, int line);
+    void setDebugMode(bool debug);
+    bool isEnabled() const;
+    bool _debug;
 };
 
 class LoggerStream : public std::ostringstream
@@ -38,8 +41,11 @@ private:
 
 extern Logger g_nLog;
 
+#define NOTIFIER_LOGGER usbguardNotifier::g_nLog
+
 #define NOTIFIER_LOG() \
-    usbguardNotifier::g_nLog.createLogMessage(__BASE_FILE__, __func__, __LINE__)
+    if (NOTIFIER_LOGGER.isEnabled()) \
+        usbguardNotifier::g_nLog.createLogMessage(__BASE_FILE__, __func__, __LINE__)
 
 } /* namespace usbguard-notifier */
 

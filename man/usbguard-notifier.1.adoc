@@ -20,6 +20,9 @@ USBGuard Notifier is a software framework mainly for detecting usbguard policy m
 *-w, --wait*::
     Wait until an active IPC connection is estabilished.
 
+*-d, --debug*::
+    Enable debug mode.
+
 *-h, --help*::
     Show help.
 

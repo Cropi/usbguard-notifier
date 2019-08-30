@@ -34,7 +34,10 @@ void LoggerStream::writeLogMessage()
     std::cout << std::endl;
 }
 
-Logger::Logger() {}
+Logger::Logger(bool debug)
+    : _debug(debug)
+{
+}
 
 LoggerStream Logger::createLogMessage(const std::string& file, const std::string& function, int line)
 {
@@ -45,4 +48,15 @@ LoggerStream Logger::createLogMessage(const std::string& file, const std::string
     };
     return LoggerStream(*this, source);
 }
+
+void Logger::setDebugMode(bool debug)
+{
+    _debug = debug;
+}
+
+bool Logger::isEnabled() const
+{
+    return _debug;
+}
+
 } /* namespace usbuard-notifier */

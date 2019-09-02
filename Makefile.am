@@ -8,6 +8,8 @@ usbguard_notifier_SOURCES = \
 	src/NotifyWrapper.hpp \
 	src/Log.hpp \
 	src/Main.cpp \
+	src/ConfigParser.cpp \
+	src/ConfigParser.hpp \
 	src/Notifier.cpp \
 	src/Log.cpp \
 	icons/usbguard-icon.svg
@@ -22,8 +24,12 @@ usbguard_notifier_CXXFLAGS = \
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
 
-# manual pages
+BUILT_SOURCES = \
+	src/build-config.h
 
+#
+# manual pages
+#
 SUFFIXES = .adoc
 
 .adoc: 
@@ -33,18 +39,23 @@ man1_MANS = \
 	$(top_builddir)/man/usbguard-notifier.1 \
 	$(top_builddir)/man/usbguard-notifier-cli.1
 
+#
 # usbguard icon
-
+#
 .svg.o:
 	$(LD) -r -b binary -o $@ $<
 
+#
 # unit file
-
-install-data-hook: install-systemd-service
-uninstall-hook: uninstall-systemd-service
+#
+install-data-hook: install-systemd-service install-usbguard-notifier-conf
+uninstall-hook: uninstall-systemd-service uninstall-usbguard-notifier-conf
 
 CLEANFILES += $(top_builddir)/usbguard-notifier.service
 
+#
+# Notifier service
+#
 usbguard-notifier.service: $(top_srcdir)/usbguard-notifier.service.in
 	$(SED) -e "s|%bindir%|${bindir}|" $^ > $@ || rm -f $@
 
@@ -55,3 +66,32 @@ install-systemd-service: $(top_builddir)/usbguard-notifier.service
 
 uninstall-systemd-service:
 	rm -f $(DESTDIR)$(SYSTEMD_UNIT_DIR)/usbguard-notifier.service
+
+CLEANFILES += $(top_builddir)/usbguard-notifier.service
+
+#
+# Saved notificaitons file path
+#
+usbguard-notifier.conf: $(top_builddir)/usbguard-notifier.conf.in
+	$(SED) \
+		-e "s|%notification_path%|@prefix@|g" \
+		$^ > $@ || rm -f $@
+
+install-usbguard-notifier-conf: $(top_builddir)/usbguard-notifier.conf
+	$(MKDIR_P) @config_PATH@/usbguard-notifier
+	$(INSTALL) -m 666 \
+		$(top_builddir)/usbguard-notifier.conf \
+		@config_PATH@/usbguard-notifier/usbguard-notifier.conf
+
+uninstall-usbguard-notifier-conf:
+	rm -f @config_PATH@/usbguard-notifier/usbguard-notifier.conf
+
+CLEANFILES += $(top_builddir)/usbguard-notifier.conf
+
+#
+# Common defines
+#
+$(top_builddir)/src/build-config.h: $(top_builddir)/src/build-config.h.in
+	$(SED) -e "s|%CONF_FILE%|@config_PATH@/usbguard-notifier/usbguard-notifier.conf|g" $^ > $@ || rm -f $@
+
+CLEANFILES += $(top_builddir)/src/build-config.h

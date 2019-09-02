@@ -16,6 +16,7 @@ public:
     LoggerStream createLogMessage(const std::string& file, const std::string& function, int line);
     void setDebugMode(bool debug);
     bool isEnabled() const;
+private:
     bool _debug;
 };
 

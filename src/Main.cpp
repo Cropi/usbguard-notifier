@@ -4,34 +4,35 @@
 #include <usbguard/Exception.hpp>
 
 #include <iostream>
+#include <libgen.h>
 #include <getopt.h>
 #include <unistd.h>
 
-static const char* short_options = "wdh";
+static const char* shortOptions = "wdh";
 
-static const struct ::option long_options[] = {
+static const struct ::option longOptions[] = {
     { "wait",  no_argument, nullptr, 'w' },
     { "debug", no_argument, nullptr, 'd' },
     { "help",  no_argument, nullptr, 'h' }
 };
 
-void showHelp(const std::string& appName, std::ostream& output)
+void showHelp(const std::string& appName, std::ostream& out)
 {
-    output << "Usage: " << appName << " [OPTIONS]" << std::endl;
-    output << std::endl;
-    output << "Options:" << std::endl;
-    output << "    -w, --wait      Wait until an active IPC connection is estabilished." << std::endl;
-    output << "    -d, --debug     Enable debug mode." << std::endl;
-    output << "    -h, --help      Show this usage message." << std::endl;
+    out<< "Usage: " << appName << " [OPTIONS]" << std::endl;
+    out<< std::endl;
+    out<< "Options:" << std::endl;
+    out<< "    -w, --wait      Wait until an active IPC connection is estabilished." << std::endl;
+    out<< "    -d, --debug     Enable debug mode." << std::endl;
+    out<< "    -h, --help      Show this usage message." << std::endl;
 }
 
 int main(int argc, char** argv)
 {
-    const std::string appName(*argv);
+    const std::string appName(::basename(*argv));
     bool waitConnection = false, debug = false;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, short_options, long_options, nullptr)) != EOF) {
+    while ((opt = getopt_long(argc, argv, shortOptions, longOptions, nullptr)) != -1) {
         switch (opt) {
         case 'w':
             waitConnection = true;
@@ -50,7 +51,6 @@ int main(int argc, char** argv)
         }
     }
     usbguardNotifier::Notifier notifier(appName);
-
     NOTIFIER_LOGGER.setDebugMode(debug);
 
     for (;;) {
@@ -69,4 +69,3 @@ int main(int argc, char** argv)
     }
     return EXIT_SUCCESS;
 }
-

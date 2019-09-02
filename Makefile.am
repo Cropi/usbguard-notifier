@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 CLEANFILES =
 
-bin_PROGRAMS = usbguard-notifier
+bin_PROGRAMS = usbguard-notifier usbguard-notifier-cli
 
 usbguard_notifier_SOURCES = \
 	src/Notifier.hpp \
@@ -21,6 +21,9 @@ usbguard_notifier_CXXFLAGS = \
 	@rsvg_CFLAGS@ \
 	@notify_CFLAGS@ \
 	@usbguard_CFLAGS@
+
+usbguard_notifier_cli_SOURCES = \
+	src/MainCli.cpp
 
 # manual pages
 

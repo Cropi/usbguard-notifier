@@ -1,0 +1,4 @@
+/*
+ * Notification config file
+ */
+#define CONF_FILE "%CONF_FILE%"

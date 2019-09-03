@@ -31,6 +31,13 @@ AC_TYPE_UINT8_T
 
 AC_CHECK_HEADERS([getopt.h unistd.h] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
+AC_ARG_WITH([config-file],
+            [AS_HELP_STRING([--with-config-file],
+            [Support user defined config path])],
+            [with_config_file=$withval],
+            [with_config_file=$prefix/.config]
+)
+
 # protobuf
 PKG_CHECK_MODULES(
     [protobuf],
@@ -100,18 +107,23 @@ CXXFLAGS+=" -Wall"
 CXXFLAGS+=" -Wextra"
 
 AC_SUBST(CPPFLAGS, $CXXFLAGS)
+AC_SUBST(config_PATH, $with_config_file)
 
 AC_CONFIG_FILES(Makefile)
 
 AC_OUTPUT
 
 echo ""
-echo "========== MACROS =============="
-echo "    systemd: $systemd_unit_dir"
+echo "============== MACROS ================="
+echo "         systemd: $systemd_unit_dir    "
 echo ""
-echo "======== LINKER OPTIONS ========"
-echo "   protobuf: $protobuf_summary"
-echo "      libqb: $libqb_summary"
-echo "  libnotify: $libnotify_summary"
-echo "libusbguard: $libusbguard_summary"
+echo "========== LINKER OPTIONS ============="
+echo "        protobuf:$protobuf_summary"
+echo "           libqb:$libqb_summary"
+echo "       libnotify: $libnotify_summary"
+echo "     libusbguard: $libusbguard_summary"
+echo ""
+echo "=========== ARGUMENTS ================="
+echo "          prefix: $prefix"
+echo "with_config_file: $with_config_file"
 echo ""

@@ -2,8 +2,8 @@
 #define SERIALIZER_HPP
 
 #include <fstream>
+#include <map>
 #include <string>
-#include <vector>
 
 namespace usbguardNotifier
 {
@@ -29,7 +29,7 @@ class Serializer
 public:
 
     /**
-     * @brief Constructs serializer without initializing fileName
+     * @brief Constructs serializer without initializing _file_name
      */
     Serializer() = default;
 
@@ -74,7 +74,7 @@ public:
      *
      * @return All notifications from the file.
      */
-    std::vector<Notification> deserializeAll() const;
+    std::map<unsigned, Notification> deserializeAll() const;
 
 private:
 

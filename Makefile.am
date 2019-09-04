@@ -10,6 +10,7 @@ usbguard_notifier_SOURCES = \
 	src/Log.hpp \
 	src/Main.cpp \
 	src/Notifier.cpp \
+	src/NotifyWrapper.cpp \
 	src/Serializer.cpp \
 	src/Log.cpp \
 	icons/usbguard-icon.svg

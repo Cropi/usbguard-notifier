@@ -45,16 +45,16 @@ Notification Serializer::deserialize() const
     return n;
 }
 
-std::vector<Notification> Serializer::deserializeAll() const
+std::map<unsigned, Notification> Serializer::deserializeAll() const
 {
     std::ifstream in(_file_name);
     if (!in) {
         throw std::runtime_error("Couldnt open file for deserialization.");
     }
-    std::vector<Notification> v;
+    std::map<unsigned, Notification> v;
     Notification n;
-    while (deserialize(in, n)) {
-        v.push_back(n);
+    for (unsigned i = 1; deserialize(in, n); ++i) {
+        v.insert({ i, n });
     }
     return v;
 }

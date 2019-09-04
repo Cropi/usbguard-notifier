@@ -9,8 +9,9 @@ static char delim = ';';
 bool Serializer::serialize(const Notification& n) const {
     std::ofstream out(_fileName, std::ios_base::app);
     if (!out) return false;
-    out << n.deviceId << delim << n.deviceName << delim << n.targetOld << delim
-        << n.targetNew << delim << n.ruleId << delim << n.rule << std::endl;
+    out << n.eventType << delim << n.deviceId << delim << n.deviceName
+        << delim << n.targetOld << delim << n.targetNew << delim
+        << n.ruleId << delim << n.rule << std::endl;
     return (bool)out;
 }
 
@@ -32,6 +33,7 @@ std::vector<Notification> Serializer::deserializeAll() const {
 }
 
 bool Serializer::deserialize(std::ifstream& in, Notification& n) const {
+    std::getline(in, n.eventType, delim);
     in >> n.deviceId;
     in.get();
     std::getline(in, n.deviceName, delim);

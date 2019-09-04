@@ -2,10 +2,10 @@
 #include "Notifier.hpp"
 #include "NotifyWrapper.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <string>
 #include <ctime>
+#include <fstream>
+#include <stdexcept>
+#include <string>
 
 #include <usbguard/DeviceManager.hpp>
 #include <usbguard/Rule.hpp>
@@ -15,10 +15,16 @@
 namespace usbguardNotifier
 {
 
+static std::vector<std::string> g_nconfig_names = {
+    "NotificationPath"
+};
+
 Notifier::Notifier(const std::string& app_name) :
-    _lib(app_name)
+    _lib(app_name),
+    _config(g_nconfig_names)
 {
-    _config = parseConfigFile(CONF_FILE);
+    _config.open(CONF_FILE, /*readonly=*/true);
+    _s.setFileName(_config.getSettingValue("NotificationPath"));
 }
 
 void Notifier::DevicePolicyChanged(
@@ -39,13 +45,14 @@ void Notifier::DevicePolicyChanged(
 
     notify::Notification n("USBGuard", body.str());
     if (!n.show()) {
-        // TODO throw exception
+        throw std::runtime_error("Failed to show notification");
     }
 
-    const Notifier::Data data = {
-        id, __func__, rule.getName(), targetOldStr, targetNewStr, rule_id, device_rule
-    };
-    storeNotification(data);
+    NOTIFIER_LOG() << "Store notification";
+
+    Notification obj = { __func__, id, rule.getName(), targetOldStr,
+        targetNewStr, rule_id, device_rule };
+    _s.serialize(obj);
 }
 
 void Notifier::DevicePresenceChanged(
@@ -68,49 +75,17 @@ void Notifier::DevicePresenceChanged(
     n.setTimeout(5000);
     n.setCategory("device");
     if (!n.show()) {
-        // TODO throw exception
+        throw std::runtime_error("Failed to show notification");
     }
+    // TODO serialize
 }
-
+/*
 void Notifier::PropertyParameterChanged(
-    const std::string& /*name*/,
-    const std::string& /*value_old*/,
-    const std::string& /*value_new*/)
+    const std::string& name,
+    const std::string& value_old,
+    const std::string& value_new)
 {
     NOTIFIER_LOG() << "Property parameter changed signal";
-    // TODO
 }
-
-void Notifier::storeNotification(const Notifier::Data& data)
-{
-    NOTIFIER_LOG() << "Store notification";
-
-    std::ofstream f;
-    f.open(_config["NotificationPath"], std::ios::app | std::ios::out);
-    if (!f.good()) {
-        std::cerr << "Could not open " << _config["NotificationPath"] << std::endl;
-        return;
-    }
-
-    std::string message;
-    std::time_t time = std::time(nullptr);
-    message.append(std::asctime(std::localtime(&time)));
-    message.pop_back(); // delete the new line character, appended by std::asctime function
-    message.append(" ");
-
-    message.append(data.event_type);
-    message.append(" on=");
-    message.append(data.device_name);
-    message.append(" from=");
-    message.append(data.target_old);
-    message.append(" to=");
-    message.append(data.target_new);
-    message.append(" with-rule=");
-    message.append(data.rule);
-
-    f << message << std::endl;
-
-    f.close();
-}
-
+*/
 } // namespace usbguardNotifier

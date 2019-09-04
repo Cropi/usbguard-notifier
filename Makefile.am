@@ -6,11 +6,11 @@ bin_PROGRAMS = usbguard-notifier usbguard-notifier-cli
 usbguard_notifier_SOURCES = \
 	src/Notifier.hpp \
 	src/NotifyWrapper.hpp \
+	src/Serializer.hpp \
 	src/Log.hpp \
 	src/Main.cpp \
-	src/ConfigParser.cpp \
-	src/ConfigParser.hpp \
 	src/Notifier.cpp \
+	src/Serializer.cpp \
 	src/Log.cpp \
 	icons/usbguard-icon.svg
 

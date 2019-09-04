@@ -11,7 +11,8 @@ namespace usbguardNotifier {
  * Structure representing usbguard notification.
  */
 struct Notification {
-    int32_t deviceId;
+    std::string eventType;
+    uint32_t deviceId;
     std::string deviceName;
     std::string targetOld;
     std::string targetNew;
@@ -24,6 +25,12 @@ struct Notification {
  */
 class Serializer {
 public:
+
+    /**
+     * @brief Constructs serializer without initializing fileName
+     */
+    Serializer() = default;
+
     /**
      * @brief Constructs serializer.
      *
@@ -42,10 +49,10 @@ public:
     /**
      * @brief Sets the name of the file on which Serializer operates.
      *
-     * @param Name of the file on which Serializer operates.
+     * @param fileName of the file on which Serializer operates.
      */
-    void setFile(std::string fileName) noexcept { _fileName = std::move(fileName); }
-   
+    void setFileName(std::string fileName) noexcept { _fileName = std::move(fileName); }
+
     /**
      * @brief Serializes given notification into the file.
      *
@@ -67,7 +74,7 @@ public:
      * @return All notifications from the file.
      */
     std::vector<Notification> deserializeAll() const;
-    
+
 private:
 
     /**

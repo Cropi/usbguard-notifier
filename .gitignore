@@ -14,6 +14,7 @@ libtool
 
 # executables
 usbguard-notifier
+usbguard-notifier-cli
 
 # protobuf generated files
 *.pb.cc

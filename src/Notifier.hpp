@@ -1,14 +1,11 @@
 #ifndef NOTIFIER_HPP
 #define NOTIFIER_HPP
 
-#include "build-config.h"
 #include "NotifyWrapper.hpp"
 #include "Serializer.hpp"
 
-#include <map>
-
-#include <usbguard/IPCClient.hpp>
 #include <usbguard/ConfigFile.hpp>
+#include <usbguard/IPCClient.hpp>
 
 namespace usbguardNotifier
 {
@@ -16,7 +13,7 @@ namespace usbguardNotifier
 class Notifier : public usbguard::IPCClient
 {
 public:
-    Notifier(const std::string& app_name);
+    explicit Notifier(const std::string& app_name);
 
     void DevicePolicyChanged(
         uint32_t id,
@@ -30,16 +27,16 @@ public:
         usbguard::DeviceManager::EventType event,
         usbguard::Rule::Target target,
         const std::string& device_rule) override;
-/*
-    void PropertyParameterChanged(
-        const std::string& name,
-        const std::string& value_old,
-        const std::string& value_new);
-*/
+    /*
+        void PropertyParameterChanged(
+            const std::string& name,
+            const std::string& value_old,
+            const std::string& value_new);
+    */
 private:
     notify::Notify _lib;
-    usbguard::ConfigFile _config;
-    Serializer _s;
+    usbguard::ConfigFile _cfg;
+    Serializer _ser;
 };
 
 } // namespace usbguardNotifier

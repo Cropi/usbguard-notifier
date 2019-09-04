@@ -5,25 +5,27 @@
 #include <string>
 #include <vector>
 
-namespace usbguardNotifier {
+namespace usbguardNotifier
+{
 
 /**
  * Structure representing usbguard notification.
  */
 struct Notification {
-    std::string eventType;
-    uint32_t deviceId;
-    std::string deviceName;
-    std::string targetOld;
-    std::string targetNew;
-    uint32_t ruleId;
+    std::string event_type;
+    uint32_t device_id;
+    std::string device_name;
+    std::string target_old;
+    std::string target_new;
+    uint32_t rule_id;
     std::string rule;
 };
 
 /**
  * Class used to serialize notifications for usbguard-notifier.
  */
-class Serializer {
+class Serializer
+{
 public:
 
     /**
@@ -34,24 +36,23 @@ public:
     /**
      * @brief Constructs serializer.
      *
-     * @param fileName Name of the file on which Serializer operates.
+     * @param file_name Name of the file on which Serializer operates.
      */
-    explicit Serializer(std::string fileName)
-    : _fileName(std::move(fileName)) {}
+    explicit Serializer(std::string file_name);
 
     /**
      * @brief Returns the name of the file on which Serializer operates.
      *
      * @return Name of the file on which Serializer operates.
      */
-    const std::string& getFileName() const noexcept { return _fileName; }
+    const std::string& getFileName() const noexcept;
 
     /**
      * @brief Sets the name of the file on which Serializer operates.
      *
-     * @param fileName of the file on which Serializer operates.
+     * @param file_name of the file on which Serializer operates.
      */
-    void setFileName(std::string fileName) noexcept { _fileName = std::move(fileName); }
+    void setFileName(std::string file_name) noexcept;
 
     /**
      * @brief Serializes given notification into the file.
@@ -89,7 +90,7 @@ private:
     /**
      * Name of the file on which Serializer operates.
      */
-    std::string _fileName;
+    std::string _file_name;
 };
 
 } // namespace usbguardNotifier

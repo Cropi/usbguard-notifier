@@ -3,19 +3,31 @@
 
 #include <string>
 #include <sstream>
-#include <fstream>
+
+#define NOTIFIER_LOGGER usbguardNotifier::g_nLog
+
+#define NOTIFIER_LOG() \
+    if (NOTIFIER_LOGGER.isEnabled()) \
+        usbguardNotifier::g_nLog.createLogMessage(__BASE_FILE__, __func__, __LINE__)
 
 namespace usbguardNotifier
 {
 
 class LoggerStream;
+
 class Logger
 {
 public:
     Logger(bool debug = false);
-    LoggerStream createLogMessage(const std::string& file, const std::string& function, int line);
-    void setDebugMode(bool debug);
-    bool isEnabled() const;
+
+    LoggerStream createLogMessage(
+        const std::string& file,
+        const std::string& function,
+        int line);
+
+    void setDebugMode(bool debug) noexcept;
+    bool isEnabled() const noexcept;
+
 private:
     bool _debug;
 };
@@ -34,7 +46,7 @@ public:
     ~LoggerStream();
 
 private:
-    void writeLogMessage();
+    void writeLogMessage() const;
 
     Logger _logger;
     Source _source;
@@ -42,12 +54,6 @@ private:
 
 extern Logger g_nLog;
 
-#define NOTIFIER_LOGGER usbguardNotifier::g_nLog
-
-#define NOTIFIER_LOG() \
-    if (NOTIFIER_LOGGER.isEnabled()) \
-        usbguardNotifier::g_nLog.createLogMessage(__BASE_FILE__, __func__, __LINE__)
-
-} /* namespace usbguard-notifier */
+} // namespace usbguardNotifier
 
 #endif

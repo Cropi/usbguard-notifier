@@ -1,15 +1,9 @@
 #ifndef NOTIFY_WRAPPER_HPP
 #define NOTIFY_WRAPPER_HPP
 
-#include <stdexcept>
 #include <string>
 
 #include <libnotify/notify.h>
-#include <librsvg-2.0/librsvg/rsvg.h>
-
-// Binary representation of the USBGuard icon.
-extern char _binary_icons_usbguard_icon_svg_start[];
-extern char _binary_icons_usbguard_icon_svg_end[];
 
 namespace notify
 {
@@ -20,17 +14,12 @@ namespace notify
 class Notify
 {
 public:
-    explicit Notify(const std::string& appName)
-    {
-        if (!notify_init(appName.c_str())) {
-            throw std::runtime_error("Failed to initialize libnotify");
-        }
-    }
+    explicit Notify(const std::string& app_name);
     Notify(const Notify&) = delete;
     Notify& operator=(const Notify&) = delete;
-    ~Notify() { notify_uninit(); }
-    std::string getAppName() const noexcept { return { notify_get_app_name() }; }
-    void setAppName(const std::string& appName) { notify_set_app_name(appName.c_str()); }
+    ~Notify();
+    std::string getAppName() const noexcept;
+    void setAppName(const std::string& app_name);
 };
 
 enum class Urgency {
@@ -58,20 +47,7 @@ public:
      * @param summary The required summary text.
      * @param body The optional body text.
      */
-    Notification(const std::string& summary, const std::string& body = "")
-        : _n(notify_notification_new(summary.c_str(), body.c_str(), nullptr))
-    {
-        RsvgHandle* handle = rsvg_handle_new_from_data(
-                (const guint8*)(_binary_icons_usbguard_icon_svg_start),
-                _binary_icons_usbguard_icon_svg_end - _binary_icons_usbguard_icon_svg_start,
-                nullptr);
-        if (!handle) {
-            throw std::runtime_error("Failed to obtain rsvg handle");
-        }
-        GdkPixbuf* pixbuf = rsvg_handle_get_pixbuf(handle);
-        notify_notification_set_image_from_pixbuf(_n, pixbuf);
-        g_object_unref(handle);
-    }
+    Notification(const std::string& summary, const std::string& body = "");
 
     Notification(const Notification&) = delete;
     Notification& operator=(const Notification&) = delete;
@@ -86,17 +62,15 @@ public:
      * @param body The optional body text.
      * @return True, unless an invalid parameter was passed.
      */
-    bool update(const std::string& summary, const std::string& body = "")
-    {
-        return notify_notification_update(_n, summary.c_str(), body.c_str(), nullptr);
-    }
+    bool update(const std::string& summary, const std::string& body = "");
 
     /**
-     * @brief Tells the notification server to display the notification on the screen.
+     * @brief Tells the notification server to display
+     * the notification on the screen.
      *
      * @return True if successful, false otherwise.
      */
-    bool show() const { return notify_notification_show(_n, nullptr); }
+    bool show() const;
 
     /**
      * @brief Sets the timeout of the notification in milliseconds.
@@ -104,15 +78,16 @@ public:
      *
      * @param timeout Timeout in milliseconds.
      */
-    void setTimeout(int timeout) noexcept { notify_notification_set_timeout(_n, timeout); }
+    void setTimeout(int timeout) noexcept;
 
     /**
      * @brief Sets the category of this notification.
-     * This can be used by the notification server to filter or display the data in a certain way.
+     * This can be used by the notification server to filter
+     * or display the data in a certain way.
      *
      * @param category The category.
      */
-    void setCategory(const std::string& category) noexcept { notify_notification_set_category(_n, category.c_str()); }
+    void setCategory(const std::string& category) noexcept;
 
     /**
      * @brief Sets the urgency level of this notification.
@@ -120,14 +95,15 @@ public:
      * @param urgency The urgency level.
      * @see Urgency
      */
-    void setUrgency(Urgency urgency) noexcept { notify_notification_set_urgency(_n, (NotifyUrgency)urgency); }
+    void setUrgency(Urgency urgency) noexcept;
 
     /**
-     * @brief Synchronously tells the notification server to hide the notification on the screen.
+     * @brief Synchronously tells the notification server
+     * to hide the notification on the screen.
      *
      * @return True if successful, false otherwise.
      */
-    bool close() const { return notify_notification_close(_n, nullptr); }
+    bool close() const;
 
 private:
     NotifyNotification* _n;

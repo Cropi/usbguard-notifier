@@ -1,4 +1,5 @@
-#include "build-config.h"
+#include "BuildConfig.h"
+#include "Common.hpp"
 #include "Log.hpp"
 #include "Notifier.hpp"
 
@@ -12,13 +13,9 @@
 namespace usbguardNotifier
 {
 
-static std::vector<std::string> cfg_vars = {
-    "NotificationPath"
-};
-
 Notifier::Notifier(const std::string& app_name) :
     _lib(app_name),
-    _cfg(cfg_vars)
+    _cfg(g_nconfig_names)
 {
     _cfg.open(CONF_FILE, /*readonly=*/true);
     _ser.setFileName(_cfg.getSettingValue("NotificationPath"));

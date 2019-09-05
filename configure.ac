@@ -38,6 +38,16 @@ AC_ARG_WITH([config-file],
             [with_config_file=$prefix/.config]
 )
 
+AC_ARG_ENABLE([permanent-notifications],
+    [AC_HELP_STRING([--enable-permanent-notifications], [Notifications will be stored permanently(default=no)])],
+    [case "${enableval}" in
+        yes) notification_path=$prefix ;;
+        no) notification_path="/tmp/`id -un`" ;;
+        *) AC_MSG_ERROR([Invalid value ${enableval} for --enable-permanent-notifications]) ;;
+    esac],
+    [notification_path="/tmp/`id -un`"]
+)
+
 # protobuf
 PKG_CHECK_MODULES(
     [protobuf],
@@ -108,6 +118,7 @@ CXXFLAGS+=" -Wextra"
 
 AC_SUBST(CPPFLAGS, $CXXFLAGS)
 AC_SUBST(config_PATH, $with_config_file)
+AC_SUBST(notification_PATH, $notification_path)
 
 AC_CONFIG_FILES(Makefile)
 
@@ -123,7 +134,8 @@ echo "           libqb:$libqb_summary"
 echo "       libnotify: $libnotify_summary"
 echo "     libusbguard: $libusbguard_summary"
 echo ""
-echo "=========== ARGUMENTS ================="
-echo "          prefix: $prefix"
-echo "with_config_file: $with_config_file"
+echo "============= ARGUMENTS ==============="
+echo "           prefix: $prefix"
+echo " with_config_file: $with_config_file"
+echo "notification_PATH: $notification_PATH"
 echo ""

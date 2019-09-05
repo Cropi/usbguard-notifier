@@ -27,7 +27,6 @@ struct Notification {
 class Serializer
 {
 public:
-
     /**
      * @brief Constructs serializer without initializing _file_name
      */
@@ -50,7 +49,7 @@ public:
     /**
      * @brief Sets the name of the file on which Serializer operates.
      *
-     * @param file_name of the file on which Serializer operates.
+     * @param file_name Name of the file on which Serializer operates.
      */
     void setFileName(std::string file_name) noexcept;
 

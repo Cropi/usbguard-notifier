@@ -29,8 +29,21 @@ BUILT_SOURCES = \
 	src/build-config.h
 
 usbguard_notifier_cli_SOURCES = \
+	src/Serializer.hpp \
+	src/NotifierCLI.hpp \
+	src/Serializer.cpp \
+	src/NotifierCLI.cpp \
 	src/MainCli.cpp
 
+usbguard_notifier_cli_LDFLAGS = \
+	@rsvg_LIBS@ \
+	@notify_LIBS@ \
+	@usbguard_LIBS@
+
+usbguard_notifier_cli_CXXFLAGS = \
+	@rsvg_CFLAGS@ \
+	@notify_CFLAGS@ \
+	@usbguard_CFLAGS@
 #
 # manual pages
 #

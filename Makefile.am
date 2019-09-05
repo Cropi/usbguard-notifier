@@ -26,13 +26,14 @@ usbguard_notifier_CXXFLAGS = \
 	@usbguard_CFLAGS@
 
 BUILT_SOURCES = \
-	src/build-config.h
+	src/BuildConfig.h
 
 usbguard_notifier_cli_SOURCES = \
 	src/Serializer.hpp \
 	src/NotifierCLI.hpp \
 	src/Serializer.cpp \
 	src/NotifierCLI.cpp \
+	src/Common.hpp \
 	src/MainCli.cpp
 
 usbguard_notifier_cli_LDFLAGS = \
@@ -108,7 +109,7 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.conf
 #
 # Common defines
 #
-$(top_builddir)/src/build-config.h: $(top_builddir)/src/build-config.h.in
+$(top_builddir)/src/BuildConfig.h: $(top_builddir)/src/BuildConfig.h.in
 	$(SED) -e "s|%CONF_FILE%|@config_PATH@/usbguard-notifier/usbguard-notifier.conf|g" $^ > $@ || rm -f $@
 
-CLEANFILES += $(top_builddir)/src/build-config.h
+CLEANFILES += $(top_builddir)/src/BuildConfig.h

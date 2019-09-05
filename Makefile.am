@@ -90,9 +90,15 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.service
 #
 # Saved notificaitons file path
 #
+.PHONY: usbguard-notifier.conf
 usbguard-notifier.conf: $(top_builddir)/usbguard-notifier.conf.in
+	$(MKDIR_P) @notification_PATH@
+	if ! test -f "@notification_PATH@/notifications.log"; then \
+		touch @notification_PATH@/notifications.log && \
+		chmod 666 @notification_PATH@/notifications.log; \
+	fi
 	$(SED) \
-		-e "s|%notification_path%|@prefix@|g" \
+		-e "s|%notification_path%|@notification_PATH@|g" \
 		$^ > $@ || rm -f $@
 
 install-usbguard-notifier-conf: $(top_builddir)/usbguard-notifier.conf
@@ -102,7 +108,7 @@ install-usbguard-notifier-conf: $(top_builddir)/usbguard-notifier.conf
 		@config_PATH@/usbguard-notifier/usbguard-notifier.conf
 
 uninstall-usbguard-notifier-conf:
-	rm -f @config_PATH@/usbguard-notifier/usbguard-notifier.conf
+	rm -rf @config_PATH@/usbguard-notifier
 
 CLEANFILES += $(top_builddir)/usbguard-notifier.conf
 

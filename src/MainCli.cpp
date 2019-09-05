@@ -1,3 +1,8 @@
+#include "NotifierCLI.hpp"
+#include "build-config.h"
+
+#include <usbguard/ConfigFile.hpp>
+
 #include <iostream>
 #include <getopt.h>
 #include <libgen.h>
@@ -17,8 +22,13 @@ void showHelp(const std::string& appName, std::ostream& out)
     out << "    -h, --help      Show this usage message." << std::endl;
 }
 
+static std::vector<std::string> config_names = {
+    "NotificationPath"
+};
+
 int main(int argc, char** argv)
 {
+    using namespace usbguardNotifier;
     const std::string appName(::basename(*argv));
     int opt;
 
@@ -34,6 +44,30 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
     }
+
+    usbguard::ConfigFile config(config_names);
+    config.open(CONF_FILE, /*readonly=*/true);
+
+    Serializer serializer(/*file_name=*/config.getSettingValue("NotificationPath"));
+    std::map<unsigned, Notification> notifications = serializer.deserializeAll();
+
+    NotifierCLI::Methods state = NotifierCLI::Methods::CLI_SHOW;
+    std::string line;
+    std::string command_key, command_options;
+
+    NotifierCLI notifier(notifications);
+    while (state != NotifierCLI::Methods::CLI_QUIT) {
+        std::cin >> line;
+        command_key = line.substr(0, line.find(" "));
+        command_options = line.substr(line.find(""));
+
+        try {
+            state = notifier.execute(command_key, command_options);
+        } catch (std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
     return EXIT_SUCCESS;
 }
 

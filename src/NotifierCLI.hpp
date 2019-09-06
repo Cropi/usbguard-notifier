@@ -2,7 +2,6 @@
 #define NOTIFIER_CLI_HPP
 
 #include "Serializer.hpp"
-#include "Notifier.hpp"
 
 #include <map>
 #include <string>
@@ -15,8 +14,16 @@ class NotifierCLI
 public:
 
     enum class Methods {
-        CLI_SHOW,
-        CLI_QUIT
+        UNKNOWN,
+        CLI_SHOW, // TODO rename
+        DISPLAY,
+        JUMP,
+        NEXT,
+        PREVIOUS,
+        REMOVE,
+        HELP,
+        COMMANDS,
+        CLI_QUIT // TODO rename
     };
 
     /**
@@ -35,28 +42,27 @@ public:
      * @return command code
      */
     Methods execute(std::string& command_key, std::string& command_options);
+    
+    void show(std::string options);
+    void display(std::string options);
+    void jump(std::string options);
+    void next(std::string options);
+    void previous(std::string options);
+    void remove(std::string options);
+    void help(std::string options);
+    void commands(std::string options);
+    void quit(std::string options);
 
-    /**
-     * @brief Show notifications
-     *
-     * @param options are used to select only certain notifications
-     *
-     * @return command code
-     */
-    Methods show(std::string options);
-
-    /**
-     * @brief Show notifications
-     *
-     * @param options are used to select only certain notifications
-     *
-     * @return command code
-     */
-    Methods quit(std::string options);
 
 private:
-    std::map<unsigned, Notification> _notifications;
-};
-} /* namespace usbguardNotifier */
 
-#endif
+    // TODO dont execute anything if db is empty
+    // TODO maybe store as a reference
+    std::map<unsigned, Notification> _notifications;
+
+    std::map<unsigned, Notification>::iterator _iter;
+};
+
+} // namespace usbguardNotifier
+
+#endif // NOTIFIER_CLI_HPP

@@ -50,7 +50,7 @@ usbguard_notifier_cli_CXXFLAGS = \
 #
 SUFFIXES = .adoc
 
-.adoc: 
+.adoc:
 	$(A2X) -f manpage $^
 
 man1_MANS = \

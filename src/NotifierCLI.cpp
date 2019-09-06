@@ -2,49 +2,62 @@
 
 #include <iostream>
 #include <iterator>
+#include <vector>
 
 namespace usbguardNotifier
 {
 
-struct command_data {
-        NotifierCLI::Methods command_type;
-        void(NotifierCLI::*command)(std::string);
+struct cmd_data {
+        CLI::Command code;
+        void(CLI::*command)(const std::string&);
 };
 
-static const std::map<std::string, command_data> cmd_handler_map = {
-    { "show", { NotifierCLI::Methods::CLI_SHOW, &NotifierCLI::show }},
-    { "display", { NotifierCLI::Methods::DISPLAY, &NotifierCLI::display }},
-    { "jump", { NotifierCLI::Methods::JUMP, &NotifierCLI::jump }},
-    { "next", { NotifierCLI::Methods::NEXT, &NotifierCLI::next }},
-    { "previous", { NotifierCLI::Methods::PREVIOUS, &NotifierCLI::previous }},
-    { "remove", { NotifierCLI::Methods::REMOVE, &NotifierCLI::remove }},
-    { "help", { NotifierCLI::Methods::HELP, &NotifierCLI::help }},
-    { "commands", { NotifierCLI::Methods::COMMANDS, &NotifierCLI::commands }},
-    { "quit", { NotifierCLI::Methods::CLI_QUIT, &NotifierCLI::quit }}
+static const std::map<std::string, cmd_data> commands = {
+    { "show", { CLI::Command::SHOW, &CLI::show }},
+    { "display", { CLI::Command::DISPLAY, &CLI::display }},
+    { "jump", { CLI::Command::JUMP, &CLI::jump }},
+    { "next", { CLI::Command::NEXT, &CLI::next }},
+    { "previous", { CLI::Command::PREVIOUS, &CLI::previous }},
+    { "remove", { CLI::Command::REMOVE, &CLI::remove }},
+    { "help", { CLI::Command::HELP, &CLI::help }},
+    { "list", { CLI::Command::LIST, &CLI::list }},
+    { "quit", { CLI::Command::QUIT, &CLI::quit }}
 };
 
-NotifierCLI::NotifierCLI(std::map<unsigned, Notification> notifications)
-    : _notifications(std::move(notifications)),
-    _iter(_notifications.end()) {}
+CLI::CLI(std::map<unsigned, Notification> notifications)
+    : _db(std::move(notifications)),
+    _iter(_db.end()) {}
 
-NotifierCLI::Methods NotifierCLI::execute(
-        std::string& command_key,
-        std::string& command_options)
+CLI::Command CLI::execute(
+        const std::string& cmd_name,
+        const std::string& cmd_options)
 {
-    const auto iterator = cmd_handler_map.find(command_key);
-    if (iterator == cmd_handler_map.cend()) {
-        return NotifierCLI::Methods::UNKNOWN;
+    const auto iterator = commands.find(cmd_name);
+    if (iterator == commands.cend()) {
+        return CLI::Command::UNKNOWN;
     }
-    //auto command = iterator->second.command;
-    (*this.*(iterator->second.command))(command_options);
-    return iterator->second.command_type;
+    auto command = iterator->second.command;
+    (*this.*command)(cmd_options);
+    return iterator->second.code;
 }
 
-void NotifierCLI::show(std::string /*options*/)
+// TODO redo and shared this with Notifier.cpp
+void printNotification(unsigned index, const Notification& n)
 {
+    std::cout << "#" << index << ": " << n.event_type << ' '
+        << n.device_name << ' ' << n.target_new << std::endl;
 }
 
-void NotifierCLI::display(std::string /*options*/)
+void CLI::show(const std::string& /*options*/)
+{
+    // TODO implement options
+
+    for (const auto& n : _db) {
+        printNotification(n.first, n.second);
+    }
+}
+
+void CLI::display(const std::string& /*options*/)
 {
     std::cout << "Notification #" << _iter->first << ":\n";
     std::cout << "    Name:      " << _iter->second.device_name << '\n';
@@ -54,11 +67,11 @@ void NotifierCLI::display(std::string /*options*/)
     std::cout << "    Rule:      " << _iter->second.rule << std::endl;
 }
 
-void NotifierCLI::jump(std::string options)
+void CLI::jump(const std::string &options)
 {
     try {
-        auto i = _notifications.find(static_cast<unsigned>(std::stoul(options)));
-        if (i == _notifications.end()) {
+        auto i = _db.find(static_cast<unsigned>(std::stoul(options)));
+        if (i == _db.end()) {
             std::cerr << "There is no element with such index." << std::endl;
             return;
         }
@@ -70,9 +83,10 @@ void NotifierCLI::jump(std::string options)
 }
 
 // TODO change
-void NotifierCLI::next(std::string /*options*/)
+void CLI::next(const std::string& /*options*/)
 {
-    if (_iter == _notifications.end()) {
+
+    if (_iter == _db.end()) {
         std::cout << "At EOF." << std::endl;
         return;
     }
@@ -80,9 +94,10 @@ void NotifierCLI::next(std::string /*options*/)
 }
 
 // TODO change
-void NotifierCLI::previous(std::string /*options*/)
+void CLI::previous(const std::string& /*options*/)
 {
- if (_iter == _notifications.end() || _iter == _notifications.begin()) {
+
+    if (_iter == _db.end() || _iter == _db.begin()) {
         std::cout << "At EOF." << std::endl;
         return;
     }
@@ -90,22 +105,22 @@ void NotifierCLI::previous(std::string /*options*/)
 }
 
 // TODO change
-void NotifierCLI::remove(std::string /*options*/)
+void CLI::remove(const std::string& /*options*/)
 {
 }
 
-void NotifierCLI::help(std::string /*options*/)
+void CLI::help(const std::string& /*options*/)
 {
 }
 
-void NotifierCLI::commands(std::string /*options*/)
+void CLI::list(const std::string& /*options*/)
 {
-    for (const auto &i : cmd_handler_map) {
+    for (const auto& i : commands) {
         std::cout << i.first << std::endl;
     }
 }
 
-void NotifierCLI::quit(std::string /*options*/)
+void CLI::quit(const std::string& /*options*/)
 {
 }
 

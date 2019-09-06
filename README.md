@@ -9,15 +9,6 @@ In order to compile the sources from a tarball/zip you will need the following d
 * [usbguard](https://github.com/USBGuard/usbguard/)
 * [libnotify](https://github.com/GNOME/libnotify)
 
-### Compile & configure
-
-USBGuard Notifier utilizies the features of autools. The following commands are required to build the project.
-
-```
-$  ./autogen.sh
-$  ./configure
-$  make
-```
 
 ### Instalation
 
@@ -25,7 +16,17 @@ It is pretty easy to install the USBGuard Notifier. There are two possibilities 
 * per user (locally)
 ```
 $  ./autogen.sh
+```
+Now you can choose if you would like to store the notifications temporarily(until reboot):
+```
 $  ./configure --prefix /home/$(id -un)
+```
+or permanently:
+```
+$ ./configure --prefix /home/$(id -un) --enable-permanent-notifications
+```
+
+```
 $  make
 $  make install SYSTEMD_UNIT_DIR=/home/$(id -un)/.config/systemd/user/
 $  systemctl enable --now --user usbguard-notifier.service

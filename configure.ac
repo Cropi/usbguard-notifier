@@ -29,13 +29,17 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_CHECK_HEADERS([getopt.h unistd.h] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
+AC_CHECK_HEADERS([getopt.h unistd.h stdexcept] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
-AC_ARG_WITH([config-file],
-            [AS_HELP_STRING([--with-config-file],
-            [Support user defined config path])],
-            [with_config_file=$withval],
-            [with_config_file=$prefix/.config]
+# As default each argument is stored temporiraly, however with this options it can be modified
+AC_ARG_ENABLE([permanent-notifications],
+    [AC_HELP_STRING([--enable-permanent-notifications], [Notifications will be stored permanently(default=no)])],
+    [case "${enableval}" in
+        yes) notification_path=$prefix ;;
+        no) notification_path="/tmp/`id -un`" ;;
+        *) AC_MSG_ERROR([Invalid value ${enableval} for --enable-permanent-notifications]) ;;
+    esac],
+    [notification_path="/tmp/`id -un`"]
 )
 
 # protobuf
@@ -107,7 +111,8 @@ CXXFLAGS+=" -Wall"
 CXXFLAGS+=" -Wextra"
 
 AC_SUBST(CPPFLAGS, $CXXFLAGS)
-AC_SUBST(config_PATH, $with_config_file)
+AC_SUBST(config_PATH, $prefix/.config)
+AC_SUBST(notification_PATH, $notification_path)
 
 AC_CONFIG_FILES(Makefile)
 
@@ -123,7 +128,8 @@ echo "           libqb:$libqb_summary"
 echo "       libnotify: $libnotify_summary"
 echo "     libusbguard: $libusbguard_summary"
 echo ""
-echo "=========== ARGUMENTS ================="
-echo "          prefix: $prefix"
-echo "with_config_file: $with_config_file"
+echo "============= ARGUMENTS ==============="
+echo "           prefix: $prefix"
+echo "      config_file: $prefix/.conf"
+echo "notification_PATH: $notification_PATH"
 echo ""

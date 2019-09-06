@@ -1,7 +1,9 @@
+#include "BuildConfig.h"
+#include "Common.hpp"
 #include "NotifierCLI.hpp"
-#include "build-config.h"
 
 #include <usbguard/ConfigFile.hpp>
+#include <usbguard/Exception.hpp>
 
 #include <iostream>
 #include <getopt.h>
@@ -14,39 +16,41 @@ static const struct ::option longOptions[] = {
     { "help",  no_argument, nullptr, 'h' }
 };
 
-void showHelp(const std::string& appName, std::ostream& out)
+void showHelp(const std::string& app_name, std::ostream& out)
 {
-    out << "Usage: " << appName << " [OPTIONS]" << std::endl;
+    out << "Usage: " << app_name << " [OPTIONS]" << std::endl;
     out << std::endl;
     out << "Options:" << std::endl;
     out << "    -h, --help      Show this usage message." << std::endl;
 }
 
-static std::vector<std::string> config_names = {
-    "NotificationPath"
-};
-
 int main(int argc, char** argv)
 {
     using namespace usbguardNotifier;
-    const std::string appName(::basename(*argv));
+    const std::string app_name(::basename(*argv));
     int opt;
 
     while ((opt = getopt_long(argc, argv, shortOptions, longOptions, nullptr)) != -1) {
         switch (opt) {
         case 'h':
-            showHelp(appName, std::cout);
+            showHelp(app_name, std::cout);
             return EXIT_SUCCESS;
         case '?':
-            showHelp(appName, std::cerr);
+            showHelp(app_name, std::cerr);
             return EXIT_FAILURE;
         default:
             return EXIT_FAILURE;
         }
     }
-    usbguard::ConfigFile config(config_names);
-    config.open(CONF_FILE, /*readonly=*/true);
-
+  
+    usbguard::ConfigFile config(g_nconfig_names);
+    try {
+        config.open(CONF_FILE, /*readonly=*/true);
+    } catch (usbguard::Exception&) {
+        std::cerr <<  "Error: Could not open the configuration file." << std::endl;
+        return EXIT_FAILURE;
+    }
+  
     Serializer serializer(config.getSettingValue("NotificationPath"));
     CLI notifier(serializer.deserializeAll());
 

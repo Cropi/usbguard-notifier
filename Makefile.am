@@ -57,6 +57,10 @@ man1_MANS = \
 	$(top_builddir)/man/usbguard-notifier.1 \
 	$(top_builddir)/man/usbguard-notifier-cli.1
 
+CLEANFILES += \
+	$(top_builddir)/man/usbguard-notifier.1 \
+	$(top_builddir)/man/usbguard-notifier-cli.1
+
 #
 # usbguard icon
 #

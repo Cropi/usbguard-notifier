@@ -54,9 +54,11 @@ int main(int argc, char** argv)
     std::string line, cmd_name, cmd_options;
 
     while (cmd_code != CLI::Command::QUIT) {
-        std::cin >> line;
-        cmd_name = line.substr(0, line.find(" "));
-        cmd_options = line.substr(line.find(""));
+        std::cin >> cmd_name;
+        // TODO figure out how to eliminate whitespace
+        std::getline(std::cin, cmd_options);
+
+        // std::cout << "|" << cmd_name << "| |" << cmd_options << "|\n";
         try {
             cmd_code = notifier.execute(cmd_name, cmd_options);
         } catch (std::runtime_error& e) {

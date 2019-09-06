@@ -24,9 +24,10 @@ static const std::map<std::string, cmd_data> commands = {
     { "quit", { CLI::Command::QUIT, &CLI::quit }}
 };
 
+// TODO might break on empty db
 CLI::CLI(std::map<unsigned, Notification> notifications)
     : _db(std::move(notifications)),
-    _iter(_db.end()) {}
+    _iter(_db.begin()) {}
 
 CLI::Command CLI::execute(
         const std::string& cmd_name,
@@ -41,19 +42,18 @@ CLI::Command CLI::execute(
     return iterator->second.code;
 }
 
-// TODO redo and shared this with Notifier.cpp
-void printNotification(unsigned index, const Notification& n)
-{
-    std::cout << "#" << index << ": " << n.event_type << ' '
-        << n.device_name << ' ' << n.target_new << std::endl;
-}
-
 void CLI::show(const std::string& /*options*/)
 {
     // TODO implement options
 
     for (const auto& n : _db) {
-        printNotification(n.first, n.second);
+        if (n.first == _iter->first) {
+            std::cout << "> ";
+        } else {
+            std::cout << "  ";
+        }
+        std::cout << "#" << n.first << ": " << n.second.event_type << " <"
+            << n.second.device_name << "> " << n.second.target_new << std::endl;
     }
 }
 
@@ -69,6 +69,7 @@ void CLI::display(const std::string& /*options*/)
 
 void CLI::jump(const std::string &options)
 {
+    std::cout << "debug: |" << options << "|" << std::endl;
     try {
         auto i = _db.find(static_cast<unsigned>(std::stoul(options)));
         if (i == _db.end()) {
@@ -90,7 +91,7 @@ void CLI::next(const std::string& /*options*/)
         std::cout << "At EOF." << std::endl;
         return;
     }
-    std::next(_iter);
+    _iter = std::next(_iter);
 }
 
 // TODO change
@@ -101,7 +102,7 @@ void CLI::previous(const std::string& /*options*/)
         std::cout << "At EOF." << std::endl;
         return;
     }
-    std::prev(_iter);
+    _iter = std::prev(_iter);
 }
 
 // TODO change

@@ -42,7 +42,7 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
     }
-
+  
     usbguard::ConfigFile config(g_nconfig_names);
     try {
         config.open(CONF_FILE, /*readonly=*/true);
@@ -50,27 +50,24 @@ int main(int argc, char** argv)
         std::cerr <<  "Error: Could not open the configuration file." << std::endl;
         return EXIT_FAILURE;
     }
-
+  
     Serializer serializer(config.getSettingValue("NotificationPath"));
-    std::map<unsigned, Notification> notifications = serializer.deserializeAll();
+    CLI notifier(serializer.deserializeAll());
 
-    NotifierCLI::Methods state = NotifierCLI::Methods::CLI_SHOW;
-    std::string line;
-    std::string command_key, command_options;
+    CLI::Command cmd_code = CLI::Command::UNKNOWN;
+    std::string line, cmd_name, cmd_options;
 
-    NotifierCLI notifier(notifications);
-    while (state != NotifierCLI::Methods::CLI_QUIT) {
-        std::cin >> line;
-        command_key = line.substr(0, line.find(" "));
-        command_options = line.substr(line.find(""));
+    while (cmd_code != CLI::Command::QUIT) {
+        std::cin >> cmd_name;
+        // TODO figure out how to eliminate whitespace
+        std::getline(std::cin, cmd_options);
 
+        // std::cout << "|" << cmd_name << "| |" << cmd_options << "|\n";
         try {
-            state = notifier.execute(command_key, command_options);
+            cmd_code = notifier.execute(cmd_name, cmd_options);
         } catch (std::runtime_error& e) {
             std::cerr << e.what() << std::endl;
         }
     }
-
     return EXIT_SUCCESS;
 }
-

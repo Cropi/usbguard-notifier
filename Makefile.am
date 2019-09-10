@@ -26,13 +26,14 @@ usbguard_notifier_CXXFLAGS = \
 	@usbguard_CFLAGS@
 
 BUILT_SOURCES = \
-	src/build-config.h
+	src/BuildConfig.h
 
 usbguard_notifier_cli_SOURCES = \
 	src/Serializer.hpp \
 	src/NotifierCLI.hpp \
 	src/Serializer.cpp \
 	src/NotifierCLI.cpp \
+	src/Common.hpp \
 	src/MainCli.cpp
 
 usbguard_notifier_cli_LDFLAGS = \
@@ -49,10 +50,14 @@ usbguard_notifier_cli_CXXFLAGS = \
 #
 SUFFIXES = .adoc
 
-.adoc: 
+.adoc:
 	$(A2X) -f manpage $^
 
 man1_MANS = \
+	$(top_builddir)/man/usbguard-notifier.1 \
+	$(top_builddir)/man/usbguard-notifier-cli.1
+
+CLEANFILES += \
 	$(top_builddir)/man/usbguard-notifier.1 \
 	$(top_builddir)/man/usbguard-notifier-cli.1
 
@@ -89,9 +94,15 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.service
 #
 # Saved notificaitons file path
 #
+.PHONY: usbguard-notifier.conf
 usbguard-notifier.conf: $(top_builddir)/usbguard-notifier.conf.in
+	$(MKDIR_P) @notification_PATH@
+	if ! test -f "@notification_PATH@/notifications.log"; then \
+		touch @notification_PATH@/notifications.log && \
+		chmod 666 @notification_PATH@/notifications.log; \
+	fi
 	$(SED) \
-		-e "s|%notification_path%|@prefix@|g" \
+		-e "s|%notification_path%|@notification_PATH@|g" \
 		$^ > $@ || rm -f $@
 
 install-usbguard-notifier-conf: $(top_builddir)/usbguard-notifier.conf
@@ -101,14 +112,14 @@ install-usbguard-notifier-conf: $(top_builddir)/usbguard-notifier.conf
 		@config_PATH@/usbguard-notifier/usbguard-notifier.conf
 
 uninstall-usbguard-notifier-conf:
-	rm -f @config_PATH@/usbguard-notifier/usbguard-notifier.conf
+	rm -rf @config_PATH@/usbguard-notifier
 
 CLEANFILES += $(top_builddir)/usbguard-notifier.conf
 
 #
 # Common defines
 #
-$(top_builddir)/src/build-config.h: $(top_builddir)/src/build-config.h.in
+$(top_builddir)/src/BuildConfig.h: $(top_builddir)/src/BuildConfig.h.in
 	$(SED) -e "s|%CONF_FILE%|@config_PATH@/usbguard-notifier/usbguard-notifier.conf|g" $^ > $@ || rm -f $@
 
-CLEANFILES += $(top_builddir)/src/build-config.h
+CLEANFILES += $(top_builddir)/src/BuildConfig.h

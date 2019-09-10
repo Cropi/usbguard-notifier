@@ -29,7 +29,7 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_CHECK_HEADERS([getopt.h unistd.h stdexcept] ,[], [AC_MSG_ERROR([Required header file(s) not found])], [])
+AC_CHECK_HEADERS([getopt.h unistd.h], [], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
 # As default each argument is stored temporiraly, however with this options it can be modified
 AC_ARG_ENABLE([permanent-notifications],

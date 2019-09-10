@@ -10,24 +10,31 @@ namespace usbguardNotifier
 struct cmd_data {
         CLI::Command code;
         void(CLI::*command)(const std::string&);
+        std::string description;
 };
 
 static const std::map<std::string, cmd_data> commands = {
-    { "show", { CLI::Command::SHOW, &CLI::show }},
-    { "display", { CLI::Command::DISPLAY, &CLI::display }},
-    { "jump", { CLI::Command::JUMP, &CLI::jump }},
-    { "next", { CLI::Command::NEXT, &CLI::next }},
-    { "previous", { CLI::Command::PREVIOUS, &CLI::previous }},
-    { "remove", { CLI::Command::REMOVE, &CLI::remove }},
-    { "help", { CLI::Command::HELP, &CLI::help }},
-    { "list", { CLI::Command::LIST, &CLI::list }},
-    { "quit", { CLI::Command::QUIT, &CLI::quit }}
+    { "show", { CLI::Command::SHOW, &CLI::show,
+        "Show all notifications." }},
+    { "display", { CLI::Command::DISPLAY, &CLI::display,
+        "Display detailed description of current notification." }},
+    { "jump", { CLI::Command::JUMP, &CLI::jump,
+        "Jump to the specified index." }},
+    { "next", { CLI::Command::NEXT, &CLI::next,
+        "Move cursor to next notification." }},
+    { "previous", { CLI::Command::PREVIOUS, &CLI::previous,
+        "Move cursor to previous notification." }},
+    { "help", { CLI::Command::HELP, &CLI::help,
+        "Show this help." }},
+    { "list", { CLI::Command::LIST, &CLI::list,
+        "List all available commands." }},
+    { "quit", { CLI::Command::QUIT, &CLI::quit,
+        "Quit CLI." }}
 };
 
-// TODO might break on empty db
-CLI::CLI(std::map<unsigned, Notification> notifications)
-    : _db(std::move(notifications)),
-    _iter(_db.begin()) {}
+CLI::CLI(const std::map<unsigned, Notification>& notifications)
+    : _db(notifications),
+    _iter(_db.cbegin()) {}
 
 CLI::Command CLI::execute(
         const std::string& cmd_name,
@@ -47,12 +54,8 @@ void CLI::show(const std::string& /*options*/)
     // TODO implement options
 
     for (const auto& n : _db) {
-        if (n.first == _iter->first) {
-            std::cout << "> ";
-        } else {
-            std::cout << "  ";
-        }
-        std::cout << "#" << n.first << ": " << n.second.event_type << " <"
+        std::cout << (n.first == _iter->first ? "> " : "  ")
+            << "#" << n.first << ": " << n.second.event_type << " <"
             << n.second.device_name << "> " << n.second.target_new << std::endl;
     }
 }
@@ -69,49 +72,41 @@ void CLI::display(const std::string& /*options*/)
 
 void CLI::jump(const std::string &options)
 {
-    std::cout << "debug: |" << options << "|" << std::endl;
     try {
         auto i = _db.find(static_cast<unsigned>(std::stoul(options)));
-        if (i == _db.end()) {
+        if (i == _db.cend()) {
             std::cerr << "There is no element with such index." << std::endl;
             return;
         }
         _iter = i;
     } catch (std::logic_error &e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Invalid index passed to jump." << std::endl;
         return;
     }
 }
 
-// TODO change
 void CLI::next(const std::string& /*options*/)
 {
-
-    if (_iter == _db.end()) {
+    if (_db.empty() || _iter == std::prev(_db.cend())) {
         std::cout << "At EOF." << std::endl;
         return;
     }
     _iter = std::next(_iter);
 }
 
-// TODO change
 void CLI::previous(const std::string& /*options*/)
 {
-
-    if (_iter == _db.end() || _iter == _db.begin()) {
-        std::cout << "At EOF." << std::endl;
+    if (_db.empty() || _iter == _db.cbegin()) {
         return;
     }
     _iter = std::prev(_iter);
 }
 
-// TODO change
-void CLI::remove(const std::string& /*options*/)
-{
-}
-
 void CLI::help(const std::string& /*options*/)
 {
+    for (const auto& i : commands) {
+        std::cout << i.first << " - " << i.second.description << std::endl;
+    }
 }
 
 void CLI::list(const std::string& /*options*/)

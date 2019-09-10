@@ -20,7 +20,6 @@ public:
         JUMP,
         NEXT,
         PREVIOUS,
-        REMOVE,
         HELP,
         LIST,
         QUIT
@@ -31,7 +30,7 @@ public:
      *
      * @param notifications Map of notifications
      */
-    explicit CLI(std::map<unsigned, Notification> notifications);
+    explicit CLI(const std::map<unsigned, Notification>& notifications);
 
     /**
      * @brief Parse and execute given command.
@@ -50,18 +49,13 @@ public:
     void jump(const std::string& options);
     void next(const std::string& options);
     void previous(const std::string& options);
-    void remove(const std::string& options);
     void help(const std::string& options);
     void list(const std::string& options);
     void quit(const std::string& options);
 
 private:
-
-    // TODO dont execute anything if db is empty
-    // TODO maybe store as a reference
-    std::map<unsigned, Notification> _db;
-
-    std::map<unsigned, Notification>::iterator _iter;
+    const std::map<unsigned, Notification>& _db;
+    std::map<unsigned, Notification>::const_iterator _iter;
 };
 
 } // namespace usbguardNotifier

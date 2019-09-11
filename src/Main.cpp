@@ -50,19 +50,24 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
     }
-    usbguardNotifier::Notifier notifier(app_name);
     NOTIFIER_LOGGER.setDebugMode(debug);
 
     for (;;) {
         try {
+            usbguardNotifier::Notifier notifier(app_name);
             notifier.connect();
             notifier.wait();
-        } catch (const usbguard::Exception& e) {
-            if (wait_connection) {
-                continue;
-            }
+        }
+        catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
+            return EXIT_FAILURE;
+        }
+        catch (const usbguard::Exception& e) {
             std::cerr << "IPC connection failure!" << e.message() << std::endl;
             std::cerr << "Check if usbguard-daemon is running in the background" << std::endl;
+            if (!wait_connection) {
+                break;
+            }
             sleep(1);
         }
     }

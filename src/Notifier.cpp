@@ -9,6 +9,7 @@
 
 #include <usbguard/DeviceManager.hpp>
 #include <usbguard/Rule.hpp>
+#include <usbguard/Exception.hpp>
 
 namespace usbguardNotifier
 {
@@ -17,8 +18,13 @@ Notifier::Notifier(const std::string& app_name) :
     _lib(app_name),
     _cfg(g_nconfig_names)
 {
-    _cfg.open(CONF_FILE, /*readonly=*/true);
-    _ser.setFileName(_cfg.getSettingValue("NotificationPath"));
+    try {
+        _cfg.open(CONF_FILE, /*readonly=*/true);
+        _ser.setFileName(_cfg.getSettingValue("NotificationPath"));
+    }
+    catch(const usbguard::Exception& e) {
+        throw std::runtime_error("Unable to open configuration file");
+    }
 }
 
 void Notifier::DevicePolicyChanged(

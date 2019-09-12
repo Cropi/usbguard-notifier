@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <iterator>
-#include <vector>
 
 namespace usbguardNotifier
 {
@@ -57,14 +56,15 @@ CLI::Command CLI::execute(
     return iterator->second.code;
 }
 
-void CLI::show(const std::string& /*options*/)
+void CLI::show(const std::string& options)
 {
-    // TODO implement options
-
-    for (const auto& n : _db) {
-        std::cout << (n.first == _iter->first ? "> " : "  ")
-            << "#" << n.first << ": " << n.second.event_type << " <"
-            << n.second.device_name << "> " << n.second.target_new << std::endl;
+    for (const auto& x : _db) {
+        std::string line = std::string(x.first == _iter->first ? ">" : " ")
+            + "#" + std::to_string(x.first) + ": " + x.second.event_type
+            + " <" + x.second.device_name + "> " + x.second.target_new;
+        if (line.find(options) != std::string::npos) {
+            std::cout << line << std::endl;
+        }
     }
 }
 
@@ -104,7 +104,7 @@ void CLI::next(const std::string& /*options*/)
 
 void CLI::previous(const std::string& /*options*/)
 {
-    if (_db.empty() || _iter == _db.cbegin()) {
+    if (_iter == _db.cbegin()) {
         return;
     }
     _iter = std::prev(_iter);

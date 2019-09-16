@@ -7,6 +7,14 @@
 namespace usbguardNotifier
 {
 
+struct cmd_cmp {
+    bool operator()(const std::string& lhs, const std::string& rhs) const {
+        return (lhs.length() == 1 || rhs.length() == 1)
+            ? lhs.front() < rhs.front()
+            : lhs < rhs;
+    }
+};
+
 struct cmd_data {
     CLI::Command code;
     void(CLI::*command)(const std::string&);
@@ -62,7 +70,6 @@ static const std::map<std::string, cmd_data> commands = {
             "Quit CLI."
         }
     }
-};
 
 CLI::CLI(const std::map<unsigned, Notification>& notifications)
     : _db(notifications),
@@ -137,7 +144,8 @@ void CLI::previous(const std::string& /*options*/)
 void CLI::help(const std::string& /*options*/)
 {
     for (const auto& i : commands) {
-        std::cout << i.first << " - " << i.second.description << std::endl;
+        std::cout << i.first.front() << ", " << i.first
+            << " - " << i.second.description << std::endl;
     }
 }
 

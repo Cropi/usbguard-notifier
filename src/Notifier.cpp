@@ -21,8 +21,7 @@ Notifier::Notifier(const std::string& app_name) :
     try {
         _cfg.open(CONF_FILE, /*readonly=*/true);
         _ser.setFileName(_cfg.getSettingValue("NotificationPath"));
-    }
-    catch(const usbguard::Exception& e) {
+    } catch (const usbguard::Exception& e) {
         throw std::runtime_error("Unable to open configuration file");
     }
 }

@@ -8,37 +8,69 @@ namespace usbguardNotifier
 {
 
 struct cmd_data {
-        CLI::Command code;
-        void(CLI::*command)(const std::string&);
-        std::string description;
+    CLI::Command code;
+    void(CLI::*command)(const std::string&);
+    std::string description;
 };
 
 static const std::map<std::string, cmd_data> commands = {
-    { "show", { CLI::Command::SHOW, &CLI::show,
-        "Show all notifications." }},
-    { "display", { CLI::Command::DISPLAY, &CLI::display,
-        "Display detailed description of current notification." }},
-    { "jump", { CLI::Command::JUMP, &CLI::jump,
-        "Jump to the specified index." }},
-    { "next", { CLI::Command::NEXT, &CLI::next,
-        "Move cursor to next notification." }},
-    { "previous", { CLI::Command::PREVIOUS, &CLI::previous,
-        "Move cursor to previous notification." }},
-    { "help", { CLI::Command::HELP, &CLI::help,
-        "Show this help." }},
-    { "list", { CLI::Command::LIST, &CLI::list,
-        "List all available commands." }},
-    { "quit", { CLI::Command::QUIT, &CLI::quit,
-        "Quit CLI." }}
+    {
+        "show", {
+            CLI::Command::SHOW, &CLI::show,
+            "Show all notifications."
+        }
+    },
+    {
+        "display", {
+            CLI::Command::DISPLAY, &CLI::display,
+            "Display detailed description of current notification."
+        }
+    },
+    {
+        "jump", {
+            CLI::Command::JUMP, &CLI::jump,
+            "Jump to the specified index."
+        }
+    },
+    {
+        "next", {
+            CLI::Command::NEXT, &CLI::next,
+            "Move cursor to next notification."
+        }
+    },
+    {
+        "previous", {
+            CLI::Command::PREVIOUS, &CLI::previous,
+            "Move cursor to previous notification."
+        }
+    },
+    {
+        "help", {
+            CLI::Command::HELP, &CLI::help,
+            "Show this help."
+        }
+    },
+    {
+        "list", {
+            CLI::Command::LIST, &CLI::list,
+            "List all available commands."
+        }
+    },
+    {
+        "quit", {
+            CLI::Command::QUIT, &CLI::quit,
+            "Quit CLI."
+        }
+    }
 };
 
 CLI::CLI(const std::map<unsigned, Notification>& notifications)
     : _db(notifications),
-    _iter(_db.cbegin()) {}
+      _iter(_db.cbegin()) {}
 
 CLI::Command CLI::execute(
-        const std::string& cmd_name,
-        const std::string& cmd_options)
+    const std::string& cmd_name,
+    const std::string& cmd_options)
 {
     const auto iterator = commands.find(cmd_name);
     if (iterator == commands.cend()) {
@@ -70,7 +102,7 @@ void CLI::display(const std::string& /*options*/)
     std::cout << "    Rule:      " << _iter->second.rule << std::endl;
 }
 
-void CLI::jump(const std::string &options)
+void CLI::jump(const std::string& options)
 {
     try {
         auto i = _db.find(static_cast<unsigned>(std::stoul(options)));
@@ -79,7 +111,7 @@ void CLI::jump(const std::string &options)
             return;
         }
         _iter = i;
-    } catch (std::logic_error &e) {
+    } catch (std::logic_error& e) {
         std::cerr << "Invalid index passed to jump." << std::endl;
         return;
     }

@@ -41,8 +41,8 @@ public:
      * @return Command code.
      */
     Command execute(
-            const std::string& cmd_name,
-            const std::string& cmd_options);
+        const std::string& cmd_name,
+        const std::string& cmd_options);
 
     void show(const std::string& options);
     void display(const std::string& options);

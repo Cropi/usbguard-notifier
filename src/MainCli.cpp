@@ -76,10 +76,8 @@ int main(int argc, char** argv)
         std::cout << "& ";
 
         std::cin >> cmd_name;
-        // TODO figure out how to eliminate whitespace
         std::getline(std::cin, cmd_options);
-
-        // std::cout << "|" << cmd_name << "| |" << cmd_options << "|\n";
+        cmd_options.erase(0, cmd_options.find_first_not_of(' '));
         try {
             cmd_code = notifier.execute(cmd_name, cmd_options);
         } catch (std::runtime_error& e) {

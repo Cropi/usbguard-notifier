@@ -7,6 +7,17 @@ namespace usbguardNotifier
 
 static char delim = ';';
 
+bool operator==(const Notification& lhs, const Notification& rhs)
+{
+    return lhs.event_type == rhs.event_type
+        && lhs.device_id == rhs.device_id
+        && lhs.device_name == rhs.device_name
+        && lhs.target_old == rhs.target_old
+        && lhs.target_new == rhs.target_new
+        && lhs.rule_id == rhs.rule_id
+        && lhs.rule == rhs.rule;
+}
+
 Serializer::Serializer(std::string file_name)
     : _file_name(std::move(file_name)) {}
 

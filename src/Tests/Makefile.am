@@ -18,4 +18,8 @@ check_PROGRAMS = \
 
 test_unit_SOURCES=\
     main.cpp \
-    Unit/test_example.cpp
+    Unit/test_notifier_cli.cpp \
+    ../NotifierCLI.hpp \
+    ../NotifierCLI.cpp \
+    ../Serializer.hpp \
+    ../Serializer.cpp

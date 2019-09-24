@@ -21,6 +21,8 @@ struct Notification {
     std::string rule;
 };
 
+bool operator==(const Notification& lhs, const Notification& rhs);
+
 /**
  * Class used to serialize notifications for usbguard-notifier.
  */

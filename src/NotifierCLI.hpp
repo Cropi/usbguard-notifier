@@ -12,6 +12,7 @@ namespace usbguardNotifier
 class CLI
 {
 public:
+    using map = typename std::map<unsigned, Notification>;
 
     enum class Command {
         UNKNOWN,
@@ -26,11 +27,11 @@ public:
     };
 
     /**
-     * @brief Constructs usbguard-notifier CLI
+     * @brief Constructs usbguard-notifier CLI.
      *
-     * @param notifications Map of notifications
+     * @param db Database of notifications.
      */
-    explicit CLI(const std::map<unsigned, Notification>& notifications);
+    explicit CLI(const map& db);
 
     /**
      * @brief Parse and execute given command.
@@ -53,9 +54,12 @@ public:
     void list(const std::string& options);
     void quit(const std::string& options);
 
+    const map& getDb() const noexcept;
+    const map::const_iterator& getIterator() const noexcept;
+
 private:
-    const std::map<unsigned, Notification>& _db;
-    std::map<unsigned, Notification>::const_iterator _iter;
+    const map& _db;
+    map::const_iterator _iter;
 };
 
 } // namespace usbguardNotifier

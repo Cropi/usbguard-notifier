@@ -58,7 +58,7 @@ int main(int argc, char** argv)
             notifier.connect();
             notifier.wait();
         } catch (const std::runtime_error& e) {
-            std::cerr << "Error:" e.what() << std::endl;
+            std::cerr << "Error:" << e.what() << std::endl;
             return EXIT_FAILURE;
         } catch (const usbguard::Exception& e) {
             std::cerr << "IPC connection failure!" << e.message() << std::endl;

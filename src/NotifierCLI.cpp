@@ -72,8 +72,8 @@ static const std::map<std::string, cmd_data, cmd_cmp> commands = {
     }
 };
 
-CLI::CLI(const std::map<unsigned, Notification>& notifications)
-    : _db(notifications),
+CLI::CLI(const CLI::map& db)
+    : _db(db),
       _iter(_db.cbegin()) {}
 
 CLI::Command CLI::execute(
@@ -160,6 +160,16 @@ void CLI::list(const std::string& /*options*/)
 
 void CLI::quit(const std::string& /*options*/)
 {
+}
+
+const CLI::map& CLI::getDb() const noexcept
+{
+    return _db;
+}
+
+const CLI::map::const_iterator& CLI::getIterator() const noexcept
+{
+    return _iter;
 }
 
 }

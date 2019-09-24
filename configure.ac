@@ -103,6 +103,31 @@ AC_SUBST(SYSTEMD_UNIT_DIR, $systemd_unit_dir)
 AC_DEFINE([SYSTEMD_SUPPORT_ENABLED], [1], [Enable systemd support int the project])
 AM_CONDITIONAL([SYSTEMD_SUPPORT_ENABLED], [test "x$systemd" = xyes ])
 
+# Catch C++ library
+AC_ARG_WITH([bundled-catch], AS_HELP_STRING([--with-bundled-catch],
+            [Build using the bundled Catch library]),
+            [with_bundled_catch=$withval], [with_bundled_catch=no])
+if test "x$with_bundled_catch" = xyes; then
+    catch_CFLAGS="-I\$(top_srcdir)/src/ThirdParty/Catch2/include"
+    catch_LIBS=""
+    AC_MSG_NOTICE([Using bundled Catch library])
+    catch_summary="bundled; $catch_CFLAGS $catch_LIBS"
+else
+    SAVE_CPPFLAGS=$CPPFLAGS
+    CPPFLAGS="-std=c++11 $CPPFLAGS -I/usr/include/catch"
+    AC_LANG_PUSH([C++])
+    AC_CHECK_HEADER([catch.hpp], [], [AC_MSG_FAILURE(catch.hpp not found or not
+        usable. Re-run with --with-bundled-catch to use the bundled library.)])
+    AC_LANG_POP
+    catch_CFLAGS="-I/usr/include/catch"
+    catch_LIBS=""
+    CPPFLAGS=$SAVE_CPPFLAGS
+    catch_summary="system-wide;
+    $catch_CFLAGS $catch_LIBS"
+fi
+AC_SUBST([catch_CFLAGS])
+AC_SUBST([catch_LIBS])
+
 CXXFLAGS=
 CXXFLAGS+=" -std=c++11"
 CXXFLAGS+=" -pedantic"
@@ -114,19 +139,23 @@ AC_SUBST(CPPFLAGS, $CXXFLAGS)
 AC_SUBST(config_PATH, $prefix/.config)
 AC_SUBST(notification_PATH, $notification_path)
 
-AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES([
+    Makefile
+    src/Tests/Makefile
+])
 
 AC_OUTPUT
 
 echo ""
 echo "============== MACROS ================="
-echo "         systemd: $systemd_unit_dir    "
+echo "          systemd: $systemd_unit_dir"
 echo ""
 echo "========== LINKER OPTIONS ============="
-echo "        protobuf:$protobuf_summary"
-echo "           libqb:$libqb_summary"
-echo "       libnotify: $libnotify_summary"
-echo "     libusbguard: $libusbguard_summary"
+echo "         protobuf: $protobuf_summary"
+echo "            Catch: $catch_summary"
+echo "            libqb: $libqb_summary"
+echo "        libnotify: $libnotify_summary"
+echo "      libusbguard: $libusbguard_summary"
 echo ""
 echo "============= ARGUMENTS ==============="
 echo "           prefix: $prefix"

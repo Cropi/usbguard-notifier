@@ -1,6 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 CLEANFILES =
 
+SUBDIRS = src/Tests/
 bin_PROGRAMS = usbguard-notifier usbguard-notifier-cli
 
 usbguard_notifier_SOURCES = \

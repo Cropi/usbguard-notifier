@@ -29,6 +29,7 @@ USBGuard Notifier is a software framework mainly for detecting usbguard policy m
 
 == SEE ALSO
 link:usbguard-notifier-cli.1.adoc#name[usbguard-notifier-cli(1)],
+link:usbguard.1.adoc#name[usbguard(1)]
 
 
 include::footer.adoc[]

@@ -6,8 +6,7 @@ using namespace usbguardNotifier;
 
 TEST_CASE("Notifier CLI", "[CLI]")
 {
-    SECTION("Construct empty")
-    {
+    SECTION("Construct empty") {
         CLI::map e;
         CLI cli(e);
         REQUIRE(cli.getDb().empty());
@@ -25,15 +24,13 @@ TEST_CASE("Notifier CLI", "[CLI]")
         { 9, {}}
     };
     CLI cli(db);
-    
-    SECTION("Construct non-empty")
-    {
+
+    SECTION("Construct non-empty") {
         REQUIRE(cli.getDb() == db);
         REQUIRE(cli.getIterator() == cli.getDb().cbegin());
     }
 
-    SECTION("Jump")
-    {
+    SECTION("Jump") {
         cli.jump("2");
         REQUIRE(cli.getIterator() == db.find(2));
         cli.jump("0");
@@ -50,11 +47,10 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(1));
     }
 
-    SECTION("Next")
-    {
+    SECTION("Next") {
         cli.jump("1");
         REQUIRE(cli.getIterator() == cli.getDb().cbegin());
-        
+
         cli.next("");
         REQUIRE(cli.getIterator() == db.find(2));
         cli.next("");
@@ -75,8 +71,7 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(9));
     }
 
-    SECTION("Previous")
-    {
+    SECTION("Previous") {
         cli.jump("9");
         REQUIRE(cli.getIterator() == cli.getDb().find(9));
 
@@ -100,8 +95,7 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(1));
     }
 
-    SECTION("Execute - jump")
-    {
+    SECTION("Execute - jump") {
         cli.execute("jump", "2");
         REQUIRE(cli.getIterator() == db.find(2));
         cli.execute("jump", "0");
@@ -118,11 +112,10 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(1));
     }
 
-    SECTION("Execute - next")
-    {
+    SECTION("Execute - next") {
         cli.execute("jump", "1");
         REQUIRE(cli.getIterator() == cli.getDb().cbegin());
-        
+
         cli.execute("next", "");
         REQUIRE(cli.getIterator() == db.find(2));
         cli.execute("next", "");
@@ -143,8 +136,7 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(9));
     }
 
-    SECTION("Execute - previous")
-    {
+    SECTION("Execute - previous") {
         cli.execute("jump", "9");
         REQUIRE(cli.getIterator() == cli.getDb().find(9));
 
@@ -168,8 +160,7 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(1));
     }
 
-    SECTION("Execute short - j")
-    {
+    SECTION("Execute short - j") {
         cli.execute("j", "2");
         REQUIRE(cli.getIterator() == db.find(2));
         cli.execute("j", "0");
@@ -186,11 +177,10 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(1));
     }
 
-    SECTION("Execute short - n")
-    {
+    SECTION("Execute short - n") {
         cli.execute("j", "1");
         REQUIRE(cli.getIterator() == cli.getDb().cbegin());
-        
+
         cli.execute("n", "");
         REQUIRE(cli.getIterator() == db.find(2));
         cli.execute("n", "");
@@ -211,8 +201,7 @@ TEST_CASE("Notifier CLI", "[CLI]")
         REQUIRE(cli.getIterator() == db.find(9));
     }
 
-    SECTION("Execute short - p")
-    {
+    SECTION("Execute short - p") {
         cli.execute("j", "9");
         REQUIRE(cli.getIterator() == cli.getDb().find(9));
 

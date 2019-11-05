@@ -3,7 +3,7 @@ If you find a bug in this software or if you'd like to request a feature to be i
 
 
 == AUTHOR
-USBGuard Notifier was written by Zoltán Fridrich and Attila Lakatoš.
+USBGuard Notifier was written by Zoltán Fridrich and Attila Lakatos.
 
 
 == RESOURCES

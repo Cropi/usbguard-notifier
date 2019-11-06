@@ -108,7 +108,7 @@ AC_ARG_WITH([bundled-catch], AS_HELP_STRING([--with-bundled-catch],
             [Build using the bundled Catch library]),
             [with_bundled_catch=$withval], [with_bundled_catch=no])
 if test "x$with_bundled_catch" = xyes; then
-    catch_CFLAGS="-I\$(top_srcdir)/src/ThirdParty/Catch2/include"
+    catch_CFLAGS="-I\$(top_srcdir)/src/ThirdParty/Catch2/single_include/catch2"
     catch_LIBS=""
     AC_MSG_NOTICE([Using bundled Catch library])
     catch_summary="bundled; $catch_CFLAGS $catch_LIBS"

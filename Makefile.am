@@ -22,6 +22,11 @@ CLEANFILES =
 
 SUBDIRS = src/Tests/
 bin_PROGRAMS = usbguard-notifier usbguard-notifier-cli
+EXTRA_DIST = \
+	src/BuildConfig.h.in \
+	README.md \
+	LICENSE \
+	src/ThirdParty/Catch2/single_include/catch2
 
 usbguard_notifier_SOURCES = \
 	src/Notifier.hpp \
@@ -67,16 +72,21 @@ usbguard_notifier_cli_CXXFLAGS = \
 #
 SUFFIXES = .adoc
 
+man_ADOC_FILES = \
+	$(top_builddir)/man/usbguard-notifier.1 \
+	$(top_builddir)/man/usbguard-notifier-cli.1
+
 .adoc:
 	$(A2X) -f manpage $^
 
 man1_MANS = \
-	$(top_builddir)/man/usbguard-notifier.1 \
-	$(top_builddir)/man/usbguard-notifier-cli.1
+	$(man_ADOC_FILES)
 
 CLEANFILES += \
-	$(top_builddir)/man/usbguard-notifier.1 \
-	$(top_builddir)/man/usbguard-notifier-cli.1
+	$(man_ADOC_FILES)
+
+EXTRA_DIST += \
+	$(man_ADOC_FILES)
 
 #
 # usbguard icon
@@ -95,6 +105,9 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.service
 #
 # Notifier service
 #
+EXTRA_DIST += \
+	$(top_srcdir)/usbguard-notifier.service.in
+
 usbguard-notifier.service: $(top_srcdir)/usbguard-notifier.service.in
 	$(SED) -e "s|%bindir%|${bindir}|" $^ > $@ || rm -f $@
 
@@ -111,6 +124,9 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.service
 #
 # Saved notificaitons file path
 #
+EXTRA_DIST += \
+	$(top_srcdir)/usbguard-notifier.conf.in
+
 .PHONY: usbguard-notifier.conf
 usbguard-notifier.conf: $(top_builddir)/usbguard-notifier.conf.in
 	$(MKDIR_P) @notification_PATH@

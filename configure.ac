@@ -62,7 +62,7 @@ PKG_CHECK_MODULES(
 PKG_CHECK_MODULES(
     [rsvg],
     [librsvg-2.0 >= 2.0.0],
-    [librsvg-2.0_summary="$rsvg_CFLAGS $rsvg_LIBS"],
+    [librsvg_summary="$rsvg_CFLAGS $rsvg_LIBS"],
     [AC_MSG_FAILURE([librsvg2 development files not found])]
 )
 
@@ -156,6 +156,7 @@ echo "            Catch: $catch_summary"
 echo "            libqb: $libqb_summary"
 echo "        libnotify: $libnotify_summary"
 echo "      libusbguard: $libusbguard_summary"
+echo "          librsvg: $librsvg_summary"
 echo ""
 echo "============= ARGUMENTS ==============="
 echo "           prefix: $prefix"

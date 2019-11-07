@@ -1,5 +1,7 @@
 # USBGuard Notifier
 
+[![Build Status](https://travis-ci.org/Cropi/usbguard-notifier.svg?branch=master)](https://travis-ci.org/Cropi/usbguard-notifier)
+
 ### About
 
 USBGuard Notifier is a software framework mainly for detecting usbguard policy modifications as well as device presence changes. In a nutshell, the purpose of this project is to create user-friendly notifications in form of quick pop-up messages.

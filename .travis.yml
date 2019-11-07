@@ -6,7 +6,8 @@ services:
     - docker
 
 before_install:
-    - docker pull fedora:29
+    - docker pull fedora:30
+    - docker run  -v $TRAVIS_BUILD_DIR/:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; cd usbguard-notifier; dnf install --nogpgcheck -y protobuf protobuf-devel libqb libqb-devel librsvg2 librsvg2-devel libnotify libnotify-devel usbguard usbguard-devel autoconf automake libtool make  gcc-c++ asciidoc git && ./autogen.sh && ./configure --prefix /home/$(id -un) --with-bundled-catch && make"
 
 script:
-    - docker run  -v /home/travis/build/Cropi/:/root/build/ fedora:rawhide /bin/sh -c "cd /root/build; ls -la; pwd; cd usbguard-notifier; dnf install --nogpgcheck -y protobuf protobuf-devel libqb libqb-devel librsvg2 librsvg2-devel libnotify libnotify-devel usbguard usbguard-devel autoconf automake libtool make  gcc-c++ asciidoc && ./autogen.sh && ./configure --prefix /home/$(id -un) --with-bundled-catch && make"
+  - echo "overwrite default script"

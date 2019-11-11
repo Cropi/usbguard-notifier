@@ -42,14 +42,6 @@ AC_ARG_ENABLE([permanent-notifications],
     [notification_path="/tmp/`id -un`"]
 )
 
-# protobuf
-PKG_CHECK_MODULES(
-    [protobuf],
-    [protobuf >= 2.5.0],
-    [protobuf_summary="$protobuf_CFLAGS $protobuf_LIBS"],
-    [AC_MSG_ERROR([Required protobuf development files not found!])]
-)
-
 # libqb
 PKG_CHECK_MODULES(
     [qb],
@@ -81,12 +73,6 @@ PKG_CHECK_MODULES(
     [libusbguard_summary="$usbguard_CFLAGS $usbguard_LIBS"],
     [AC_MSG_FAILURE([libusbguard development files not found])]
 )
-
-# protoc
-AC_CHECK_PROGS(PROTOC, [protoc])
-if test -z "$PROTOC"; then
-  AC_MSG_ERROR(["Required protoc compiler not found!"])
-fi
 
 # asciidoc
 AC_CHECK_PROGS(A2X, [a2x])

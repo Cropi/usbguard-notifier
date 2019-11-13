@@ -39,6 +39,9 @@ $  systemctl enable --now --user usbguard-notifier.service
 
 You might get an **IPC connection** error while trying to execute the binary program. It means the usbguard.service stopped working or you have not started it yet.
 
+If you want to compile the sources in a cloned repository, you’ll have to run the ./autogen.sh script. It will fetch the sources (via git submodule) of [CATCH](https://github.com/catchorg/Catch2/). The script will then initialize the autotools based build system. 
+
+USBGuard Notifier has to use the same version of usbguard-devel package that USBGuard uses in your system.
 
 ### Contribution
 

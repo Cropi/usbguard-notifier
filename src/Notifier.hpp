@@ -54,7 +54,6 @@ public:
     */
 private:
     notify::Notify _lib;
-    usbguard::ConfigFile _cfg;
     Serializer _ser;
 };
 

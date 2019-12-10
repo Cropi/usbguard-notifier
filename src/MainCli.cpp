@@ -19,7 +19,6 @@
  */
 
 #include "BuildConfig.h"
-#include "Common.hpp"
 #include "NotifierCLI.hpp"
 
 #include <usbguard/ConfigFile.hpp>
@@ -63,17 +62,8 @@ int main(int argc, char** argv)
         }
     }
 
-    // Read config file
-    usbguard::ConfigFile config(g_nconfig_names);
-    try {
-        config.open(CONF_FILE, /*readonly=*/true);
-    } catch (usbguard::Exception&) {
-        std::cerr <<  "Error: Could not open the configuration file." << std::endl;
-        return EXIT_FAILURE;
-    }
-
     // Load notifications from file
-    std::string notification_path = config.getSettingValue("NotificationPath");
+    std::string notification_path = NOTIFICATION_FILE;
     Serializer serializer(notification_path);
     std::map<unsigned, Notification> map;
     try {

@@ -59,7 +59,6 @@ usbguard_notifier_cli_SOURCES = \
 	src/NotifierCLI.hpp \
 	src/Serializer.cpp \
 	src/NotifierCLI.cpp \
-	src/Common.hpp \
 	src/MainCli.cpp
 
 usbguard_notifier_cli_LDFLAGS = \
@@ -98,8 +97,8 @@ EXTRA_DIST += \
 #
 # unit file
 #
-install-data-hook: install-systemd-service install-usbguard-notifier-conf
-uninstall-hook: uninstall-systemd-service uninstall-usbguard-notifier-conf
+install-data-hook: install-systemd-service
+uninstall-hook: uninstall-systemd-service
 
 CLEANFILES += $(top_builddir)/usbguard-notifier.service
 
@@ -123,37 +122,9 @@ uninstall-systemd-service:
 CLEANFILES += $(top_builddir)/usbguard-notifier.service
 
 #
-# Saved notificaitons file path
-#
-EXTRA_DIST += \
-	$(top_srcdir)/usbguard-notifier.conf.in
-
-.PHONY: usbguard-notifier.conf
-usbguard-notifier.conf: $(top_builddir)/usbguard-notifier.conf.in
-	$(MKDIR_P) @notification_PATH@
-	if ! test -f "@notification_PATH@/notifications.log"; then \
-		touch @notification_PATH@/notifications.log && \
-		chmod 666 @notification_PATH@/notifications.log; \
-	fi
-	$(SED) \
-		-e "s|%notification_path%|@notification_PATH@|g" \
-		$^ > $@ || rm -f $@
-
-install-usbguard-notifier-conf: $(top_builddir)/usbguard-notifier.conf
-	$(MKDIR_P) @config_PATH@/usbguard-notifier
-	$(INSTALL) -m 666 \
-		$(top_builddir)/usbguard-notifier.conf \
-		@config_PATH@/usbguard-notifier/usbguard-notifier.conf
-
-uninstall-usbguard-notifier-conf:
-	rm -rf @config_PATH@/usbguard-notifier
-
-CLEANFILES += $(top_builddir)/usbguard-notifier.conf
-
-#
 # Common defines
 #
 $(top_builddir)/src/BuildConfig.h: $(top_builddir)/src/BuildConfig.h.in
-	$(SED) -e "s|%CONF_FILE%|@config_PATH@/usbguard-notifier/usbguard-notifier.conf|g" $^ > $@ || rm -f $@
+	$(SED) -e "s|%NOTIFICATION_PATH%|@notification_PATH@|g" $^ > $@ || rm -f $@
 
 CLEANFILES += $(top_builddir)/src/BuildConfig.h

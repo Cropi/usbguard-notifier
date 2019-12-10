@@ -48,7 +48,8 @@ usbguard_notifier_LDFLAGS = \
 usbguard_notifier_CXXFLAGS = \
 	@rsvg_CFLAGS@ \
 	@notify_CFLAGS@ \
-	@usbguard_CFLAGS@
+	@usbguard_CFLAGS@ \
+	-fPIC
 
 BUILT_SOURCES = \
 	src/BuildConfig.h

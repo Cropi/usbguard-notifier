@@ -19,7 +19,8 @@
 
 AM_CPPFLAGS = \
     -I$(top_srcdir)/src \
-    @catch_CFLAGS@
+    @catch_CFLAGS@ \
+	-fPIC
 
 EXTRA_DIST = \
     $(top_srcdir)/src/ThirdParty/Catch2

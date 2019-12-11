@@ -75,6 +75,7 @@ int main(int argc, char** argv)
         try {
             usbguardNotifier::Notifier notifier(app_name);
             notifier.connect();
+            std::cout << "Connection has been established" << std::endl;
             notifier.wait();
         } catch (const std::runtime_error& e) {
             std::cerr << "Error:" << e.what() << std::endl;

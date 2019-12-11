@@ -24,6 +24,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <unistd.h>
 
 #include <usbguard/DeviceManager.hpp>
 #include <usbguard/Rule.hpp>
@@ -35,7 +36,8 @@ namespace usbguardNotifier
 Notifier::Notifier(const std::string& app_name) :
     _lib(app_name)
 {
-    _ser.setFileName(NOTIFICATION_FILE);
+    std::string path(std::string(NOTIFICATION_DIR) + "/" + std::string(getlogin()));
+    _ser.setFileName(path);
 }
 
 void Notifier::DevicePolicyChanged(

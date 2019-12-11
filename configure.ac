@@ -32,14 +32,12 @@ AC_TYPE_UINT8_T
 AC_CHECK_HEADERS([getopt.h unistd.h], [], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
 # As default each argument is stored temporiraly, however with this options it can be modified
-AC_ARG_ENABLE([permanent-notifications],
-    [AC_HELP_STRING([--enable-permanent-notifications], [Notifications will be stored permanently(default=no)])],
-    [case "${enableval}" in
-        yes) notification_path=$prefix ;;
-        no) notification_path="/tmp/`id -un`" ;;
-        *) AC_MSG_ERROR([Invalid value ${enableval} for --enable-permanent-notifications]) ;;
-    esac],
-    [notification_path="/tmp/`id -un`"]
+notification_path="/tmp/usbguard-notifier"
+AC_ARG_WITH(
+    [permanent-notifications],
+    AS_HELP_STRING([--with-permanent-notifications], [Select notifications path]),
+    [notification_path=$withval],
+    [notificaiton_path="/tmp/usbguard-notifier"]
 )
 
 # libqb

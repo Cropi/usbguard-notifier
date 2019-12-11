@@ -126,5 +126,6 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.service
 #
 $(top_builddir)/src/BuildConfig.h: $(top_builddir)/src/BuildConfig.h.in
 	$(SED) -e "s|%NOTIFICATION_PATH%|@notification_PATH@|g" $^ > $@ || rm -f $@
+	$(MKDIR_P) @notification_PATH@
 
 CLEANFILES += $(top_builddir)/src/BuildConfig.h

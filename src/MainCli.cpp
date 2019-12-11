@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     }
 
     // Load notifications from file
-    std::string notification_path = NOTIFICATION_FILE;
+    std::string notification_path(std::string(NOTIFICATION_DIR) + "/" + std::string(getlogin()));
     Serializer serializer(notification_path);
     std::map<unsigned, Notification> map;
     try {

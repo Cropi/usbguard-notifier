@@ -1,4 +1,4 @@
 /*
  * Notification file
  */
-#define NOTIFICATION_FILE "%NOTIFICATION_PATH%"
+#define NOTIFICATION_DIR "%NOTIFICATION_PATH%"

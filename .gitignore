@@ -41,3 +41,4 @@ src/Tests/*.trs
 # others
 src/BuildConfig.h
 usbguard-notifier.conf
+tags

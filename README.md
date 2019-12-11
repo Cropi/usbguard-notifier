@@ -26,7 +26,7 @@ $  ./configure --prefix /home/$(id -un)
 ```
 or permanently:
 ```
-$ ./configure --prefix /home/$(id -un) --enable-permanent-notifications
+$ ./configure --prefix /home/$(id -un) --with-permanent-notifications=path/to/dir
 ```
 
 ```

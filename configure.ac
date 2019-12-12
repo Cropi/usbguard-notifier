@@ -112,12 +112,28 @@ fi
 AC_SUBST([catch_CFLAGS])
 AC_SUBST([catch_LIBS])
 
+CXXFLAGS_DEBUG="-g -O0"
+AC_ARG_ENABLE(
+    [debug-build],
+    [AC_HELP_STRING([--enable-debug-build], [enable debugging flags (default=no)])],
+    [case "${enableval}" in
+        yes) debug=yes ;;
+        no) debug=no ;;
+        *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug-build]) ;;
+    esac],
+    [debug=no]
+)
+
 CXXFLAGS=
 CXXFLAGS+=" -std=c++11"
 CXXFLAGS+=" -pedantic"
 CXXFLAGS+=" -Wno-unknown-pragmas"
 CXXFLAGS+=" -Wall"
 CXXFLAGS+=" -Wextra"
+
+if test "x$debug" = xyes; then
+    CXXFLAGS="$CXXFLAGS $CXXFLAGS_DEBUG"
+fi
 
 AC_SUBST(CPPFLAGS, $CXXFLAGS)
 AC_SUBST(config_PATH, $prefix/.config)

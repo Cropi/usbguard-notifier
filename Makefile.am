@@ -65,7 +65,8 @@ usbguard_notifier_cli_LDFLAGS = \
 	@usbguard_LIBS@
 
 usbguard_notifier_cli_CXXFLAGS = \
-	@usbguard_CFLAGS@
+	@usbguard_CFLAGS@ \
+	-fPIC
 
 #
 # manual pages

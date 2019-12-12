@@ -1,6 +1,6 @@
 AC_PREREQ([2.61])
 
-AC_INIT([usbguard-notifier], [0.0.1], [alakatos@redhat.com])
+AC_INIT([usbguard-notifier], [0.0.2], [alakatos@redhat.com])
 AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])

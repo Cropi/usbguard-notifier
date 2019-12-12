@@ -26,6 +26,7 @@ EXTRA_DIST = \
 	src/BuildConfig.h.in \
 	README.md \
 	LICENSE \
+	CHANGELOG.md \
 	src/ThirdParty/Catch2/single_include/catch2
 
 usbguard_notifier_SOURCES = \

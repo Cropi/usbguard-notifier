@@ -11,6 +11,7 @@ USBGuard Notifier is a software framework mainly for detecting usbguard policy m
 In order to compile the sources from a tarball/zip you will need the following development files:
 * [usbguard](https://github.com/USBGuard/usbguard/)
 * [libnotify](https://github.com/GNOME/libnotify)
+* [librsvg](https://github.com/GNOME/librsvg)
 
 
 ### Instalation

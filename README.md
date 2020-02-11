@@ -12,6 +12,7 @@ In order to compile the sources from a tarball/zip you will need the following d
 * [usbguard](https://github.com/USBGuard/usbguard/)
 * [libnotify](https://github.com/GNOME/libnotify)
 * [librsvg](https://github.com/GNOME/librsvg)
+* [asciidoc](https://github.com/asciidoc/asciidoc)
 
 
 ### Instalation

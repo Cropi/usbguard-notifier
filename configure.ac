@@ -1,4 +1,4 @@
-AC_PREREQ([2.61])
+AC_PREREQ([2.69])
 
 AC_INIT([usbguard-notifier], [0.0.2], [alakatos@redhat.com])
 AC_CONFIG_SRCDIR([src/])
@@ -16,7 +16,8 @@ AC_PROG_CC
 
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AM_PROG_LIBTOOL
+LT_PREREQ([2.4.6])
+LT_INIT
 
 # Check for headers, typedefs, data structures
 AC_CHECK_HEADER_STDBOOL

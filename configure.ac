@@ -4,6 +4,7 @@ AC_INIT([usbguard-notifier], [0.0.3], [alakatos@redhat.com])
 AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
+m4_pattern_allow([AC_MSG_FAILURE])
 
 # if it's possible enable silent compilation
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -12,7 +13,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects tar-pax])
 
 AC_PROG_MAKE_SET
 AC_PROG_CXX
-AC_PROG_CC
+AC_PROG_CC_C99
 
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET

@@ -1,3 +1,7 @@
+### 0.0.3 - 2020-02-24
+## Added
+- Configuration file now has an additional option to use either systemd-system-unitdir or systemd-user-unitdir
+
 ### 0.0.3 - 2020-02-14
 ## Fixed
 - Configure.ac has been updated to ensure that a recent version of Autoconf is being used

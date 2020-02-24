@@ -42,6 +42,15 @@ AC_ARG_WITH(
     [notificaiton_path="/tmp/usbguard-notifier"]
 )
 
+AC_ARG_ENABLE([systemd-systemunitdir],
+    [AC_HELP_STRING([--enable-systemd-systemunitdir], [enable systemd system unit dir(default=no)])],
+    [case "${enableval}" in
+        yes) systemd_systemunitdir=yes;;
+        no) systemd_systemunitdir=no;;
+        *) AC_MSG_ERROR([bad value ${enableval} for --enable-systemd-systemunitdir]) ;;
+     esac],
+    [systemd_systemunitdir=no] )
+
 # libqb
 PKG_CHECK_MODULES(
     [qb],
@@ -81,7 +90,12 @@ if test -z "$A2X"; then
 fi
 
 # systemd
-systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemduserunitdir`"
+if test "x$systemd_systemunitdir" = xyes; then
+    systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemdsystemunitdir`"
+else
+    systemd_unit_dir="`$PKG_CONFIG systemd --variable=systemduserunitdir`"
+fi
+
 if test "x$systemd_unit_dir" = x; then
     AC_MSG_FAILURE([Cannot detect the systemd system unit dir])
 fi

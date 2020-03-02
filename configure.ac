@@ -1,6 +1,6 @@
 AC_PREREQ([2.69])
 
-AC_INIT([usbguard-notifier], [0.0.4], [alakatos@redhat.com])
+AC_INIT([usbguard-notifier], [0.0.5], [alakatos@redhat.com])
 AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -8,6 +8,8 @@ m4_pattern_allow([AC_MSG_FAILURE])
 
 # if it's possible enable silent compilation
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+EXTERNAL_CXXFLAGS="$CXXFLAGS"
 
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-pax])
 
@@ -128,7 +130,7 @@ fi
 AC_SUBST([catch_CFLAGS])
 AC_SUBST([catch_LIBS])
 
-CXXFLAGS_DEBUG="-g -O0"
+CXXFLAGS_DEBUG="-g -O2"
 AC_ARG_ENABLE(
     [debug-build],
     [AC_HELP_STRING([--enable-debug-build], [enable debugging flags (default=no)])],
@@ -140,7 +142,7 @@ AC_ARG_ENABLE(
     [debug=no]
 )
 
-CXXFLAGS=
+CXXFLAGS=" $EXTERNAL_CXXFLAGS"
 CXXFLAGS+=" -std=c++11"
 CXXFLAGS+=" -pedantic"
 CXXFLAGS+=" -Wno-unknown-pragmas"

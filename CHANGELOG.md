@@ -1,4 +1,8 @@
-### 0.0.3 - 2020-02-24
+### 0.0.5 - 2020-03-02
+## Added
+- Pass FLAGS to configure script
+
+### 0.0.4 - 2020-02-24
 ## Added
 - Configuration file now has an additional option to use either systemd-system-unitdir or systemd-user-unitdir
 

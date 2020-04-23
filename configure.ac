@@ -53,14 +53,6 @@ AC_ARG_ENABLE([systemd-systemunitdir],
      esac],
     [systemd_systemunitdir=no] )
 
-# libqb
-PKG_CHECK_MODULES(
-    [qb],
-    [libqb >= 1.0.5],
-    [libqb_summary="$qb_CFLAGS $qb_LIBS"],
-    [AC_MSG_FAILURE([libqb development files not found])]
-)
-
 # librsvg2
 PKG_CHECK_MODULES(
     [rsvg],

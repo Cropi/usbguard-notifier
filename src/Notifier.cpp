@@ -36,7 +36,8 @@ namespace usbguardNotifier
 Notifier::Notifier(const std::string& app_name) :
     _lib(app_name)
 {
-    std::string path(std::string(NOTIFICATION_DIR) + "/" + std::string(getlogin()));
+    std::string login = getlogin() ? getlogin() : "unknown";
+    std::string path(std::string(NOTIFICATION_DIR) + "/" + login);
     _ser.setFileName(path);
 }
 

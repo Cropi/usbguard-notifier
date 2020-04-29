@@ -1,3 +1,13 @@
+### 0.0.6 - 2020-04-29
+## Added
+- Configuration option that disables building notifier-cli
+
+## Fixed
+- Fix segmentation fault when login can not be determined
+
+## Removed
+- Remove unnecessary dependency(libqb>=1.0.5), which does not exist in some distributions yet. We do not use libqb directly, so we let usbguard decide which version they do want as a requirement.
+
 ### 0.0.5 - 2020-03-02
 ## Added
 - Pass FLAGS to configure script

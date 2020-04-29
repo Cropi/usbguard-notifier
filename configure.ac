@@ -44,6 +44,17 @@ AC_ARG_WITH(
     [notificaiton_path="/tmp/usbguard-notifier"]
 )
 
+# Build notifier-cli, default is yes
+AC_ARG_ENABLE([notifier-cli],
+    [AC_HELP_STRING([--enable-notifier-cli], [enable notifier cli(default=yes)])],
+    [case "${enableval}" in
+        yes) notifier_cli_enabled=yes;;
+        no) notifier_cli_enabled=no;;
+        *) AC_MSG_ERROR([bad value ${enableval} for --enable-notifier-cli]) ;;
+     esac],
+    [notifier_cli_enabled=yes]
+)
+
 AC_ARG_ENABLE([systemd-systemunitdir],
     [AC_HELP_STRING([--enable-systemd-systemunitdir], [enable systemd system unit dir(default=no)])],
     [case "${enableval}" in
@@ -51,7 +62,8 @@ AC_ARG_ENABLE([systemd-systemunitdir],
         no) systemd_systemunitdir=no;;
         *) AC_MSG_ERROR([bad value ${enableval} for --enable-systemd-systemunitdir]) ;;
      esac],
-    [systemd_systemunitdir=no] )
+    [systemd_systemunitdir=no]
+)
 
 # librsvg2
 PKG_CHECK_MODULES(
@@ -147,7 +159,9 @@ fi
 
 AC_SUBST(CPPFLAGS, $CXXFLAGS)
 AC_SUBST(config_PATH, $prefix/.config)
-AC_SUBST(notification_PATH, $notification_path)
+AC_SUBST(NOTIFICATION_PATH, $notification_path)
+
+AM_CONDITIONAL([NOTIFIER_CLI_ENABLED], [test "x$notifier_cli_enabled" = xyes ])
 
 AC_CONFIG_FILES([
     Makefile
@@ -161,9 +175,7 @@ echo "============== MACROS ================="
 echo "          systemd: $systemd_unit_dir"
 echo ""
 echo "========== LINKER OPTIONS ============="
-echo "         protobuf: $protobuf_summary"
 echo "            Catch: $catch_summary"
-echo "            libqb: $libqb_summary"
 echo "        libnotify: $libnotify_summary"
 echo "      libusbguard: $libusbguard_summary"
 echo "          librsvg: $librsvg_summary"
@@ -172,5 +184,6 @@ echo ""
 echo "============= ARGUMENTS ==============="
 echo "           prefix: $prefix"
 echo "      config_file: $prefix/.conf"
-echo "notification_PATH: $notification_PATH"
+echo "notification_path: $notification_path"
+echo "     notifier_cli: $notifier_cli_enabled"
 echo ""

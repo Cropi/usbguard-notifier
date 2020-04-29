@@ -21,7 +21,12 @@ ACLOCAL_AMFLAGS = -I m4
 CLEANFILES =
 
 SUBDIRS = src/Tests/
-bin_PROGRAMS = usbguard-notifier usbguard-notifier-cli
+bin_PROGRAMS = usbguard-notifier
+if NOTIFIER_CLI_ENABLED
+bin_PROGRAMS += \
+	usbguard-notifier-cli
+endif
+
 EXTRA_DIST = \
 	src/BuildConfig.h.in \
 	README.md \
@@ -75,8 +80,12 @@ usbguard_notifier_cli_CXXFLAGS = \
 SUFFIXES = .adoc
 
 man_ADOC_FILES = \
-	$(top_builddir)/man/usbguard-notifier.1 \
+	$(top_builddir)/man/usbguard-notifier.1
+
+if NOTIFIER_CLI_ENABLED
+man_ADOC_FILES += \
 	$(top_builddir)/man/usbguard-notifier-cli.1
+endif
 
 .adoc:
 	$(A2X) -f manpage $^
@@ -127,7 +136,7 @@ CLEANFILES += $(top_builddir)/usbguard-notifier.service
 # Common defines
 #
 $(top_builddir)/src/BuildConfig.h: $(top_builddir)/src/BuildConfig.h.in
-	$(SED) -e "s|%NOTIFICATION_PATH%|@notification_PATH@|g" $^ > $@ || rm -f $@
-	$(MKDIR_P) @notification_PATH@
+	$(SED) -e "s|%NOTIFICATION_PATH%|@NOTIFICATION_PATH@|g" $^ > $@ || rm -f $@
+	$(MKDIR_P) @NOTIFICATION_PATH@
 
 CLEANFILES += $(top_builddir)/src/BuildConfig.h

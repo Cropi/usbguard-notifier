@@ -57,6 +57,13 @@ usbguard_notifier_CXXFLAGS = \
 	@usbguard_CFLAGS@ \
 	-fPIC
 
+if CUSTOM_USBGUARD_DEVEL_ENABLED
+usbguard_notifier_LDADD = \
+	@usbguard_LA@
+usbguard_notifier_cli_LDADD = \
+	@usbguard_LA@
+endif
+
 BUILT_SOURCES = \
 	src/BuildConfig.h
 

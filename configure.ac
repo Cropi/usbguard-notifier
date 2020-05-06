@@ -44,6 +44,32 @@ AC_ARG_WITH(
     [notificaiton_path="/tmp/usbguard-notifier"]
 )
 
+# usbguard-devel
+# Add the path to where your usbguard-devel includes are
+# You might need this option when you want to package usbguard-notifier
+# together with usbguard at the same time
+AC_ARG_WITH(
+    [usbguard-devel],
+    AS_HELP_STRING([--with-usbguard-devel], [Select to compile notifier from source usbguard devel files(only top level directory)]),
+    [usbguard_CFLAGS="-I$withval/src/Library/public/"
+     usbguard_LIBS=""
+     usbguard_LA="$withval/libusbguard.la"
+     libusbguard_summary="$usbguard_CFLAGS $usbguard_LIBS"
+     AC_SUBST([usbguard_CFLAGS])
+     AC_SUBST([usbguard_LIBS])
+     AC_SUBST([usbguard_LA])
+     custom_usbguard_devel_enabled=yes
+    ],
+    [
+        PKG_CHECK_MODULES(
+            [usbguard],
+            [libusbguard >= 0.7.2],
+            [libusbguard_summary="$usbguard_CFLAGS $usbguard_LIBS"],
+            [AC_MSG_FAILURE([libusbguard development files not found])]
+        )
+    ]
+)
+
 # Build notifier-cli, default is yes
 AC_ARG_ENABLE([notifier-cli],
     [AC_HELP_STRING([--enable-notifier-cli], [enable notifier cli(default=yes)])],
@@ -79,14 +105,6 @@ PKG_CHECK_MODULES(
     [libnotify >= 0.7.0],
     [libnotify_summary="$notify_CFLAGS $notify_LIBS"],
     [AC_MSG_FAILURE([libnotify development files not found])]
-)
-
-# usbguard
-PKG_CHECK_MODULES(
-    [usbguard],
-    [libusbguard >= 0.7.2],
-    [libusbguard_summary="$usbguard_CFLAGS $usbguard_LIBS"],
-    [AC_MSG_FAILURE([libusbguard development files not found])]
 )
 
 # asciidoc
@@ -162,6 +180,7 @@ AC_SUBST(config_PATH, $prefix/.config)
 AC_SUBST(NOTIFICATION_PATH, $notification_path)
 
 AM_CONDITIONAL([NOTIFIER_CLI_ENABLED], [test "x$notifier_cli_enabled" = xyes ])
+AM_CONDITIONAL([CUSTOM_USBGUARD_DEVEL_ENABLED], [test "x$custom_usbguard_devel_enabled" = "xyes"])
 
 AC_CONFIG_FILES([
     Makefile

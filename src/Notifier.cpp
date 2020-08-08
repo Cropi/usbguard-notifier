@@ -87,6 +87,16 @@ void Notifier::DevicePresenceChanged(
 
     notify::Notification n("USBGuard", body.str());
     n.setTimeout(5000);
+
+    // TODO: is "EventType::Insert only sufficent?
+    // or should it be !EventType::Remove ?"
+    // should it be only block and reject or everything but Allow?
+    // please give feedback as I am not much versed on usbguard rules.
+
+    if (event == usbguard::DeviceManager::EventType::Insert &&
+        (target == Rule::Target::Block || target == Rule::Target::Reject)) {
+        n.setAllowAction(rule, this);
+    }
     n.setCategory("device");
     if (!n.show()) {
         throw std::runtime_error("Failed to show notification");

@@ -51,6 +51,7 @@ int main(int argc, char** argv)
     bool wait_connection = false, debug = false;
     int opt;
 
+    GMainLoop* loop = g_main_loop_new(nullptr, FALSE);
     while ((opt = getopt_long(argc, argv, short_options, long_options, nullptr)) != -1) {
         switch (opt) {
         case 'w':
@@ -76,7 +77,8 @@ int main(int argc, char** argv)
             usbguardNotifier::Notifier notifier(app_name);
             notifier.connect();
             std::cout << "Connection has been established" << std::endl;
-            notifier.wait();
+            g_main_loop_run(loop);
+            //notifier.wait();
         } catch (const std::runtime_error& e) {
             std::cerr << "Error:" << e.what() << std::endl;
             return EXIT_FAILURE;

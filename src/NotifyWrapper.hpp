@@ -23,6 +23,12 @@
 #include <string>
 
 #include <libnotify/notify.h>
+#include <usbguard/Rule.hpp>
+
+namespace usbguardNotifier
+{
+class Notifier;
+}
 
 namespace notify
 {
@@ -59,6 +65,16 @@ enum class Urgency {
 class Notification
 {
 public:
+    /**
+    * @brief a simple struct to pass multiple parameters in a Gtk callback.
+    */
+    struct AllowDeviceActionData {
+        usbguard::Rule rule;
+        usbguardNotifier::Notifier* notifier;
+        AllowDeviceActionData(usbguard::Rule r, usbguardNotifier::Notifier* n) : rule(r), notifier(n) {}
+    };
+
+
     /**
      * @brief Creates a new Notification with USBGuard icon.
      * The summary text is required, but all other parameters are optional.
@@ -98,6 +114,64 @@ public:
      * @param timeout Timeout in milliseconds.
      */
     void setTimeout(int timeout) noexcept;
+
+    /**
+    * @brief An utility method to replace all occurences of a
+    *  substring in a string with another substring
+    *
+    * @param str the original string.
+    * @param from the substring to search for.
+    * @param to the string to replace with
+    */
+    static void replaceAll(std::string& str, const std::string& from,
+        const std::string& to);
+
+
+    /**
+    * @brief Sets the action button to allow the device.
+    * pressing should open a prompt asking for the admin password
+    * before creating a new rule on USBGuard's rules.conf
+    *
+    * @param rule The rule to be added.
+    * @param notifier The notifier object to send the IPC message.
+    */
+    void setAllowAction(usbguard::Rule& rule,
+        usbguardNotifier::Notifier* notifier) noexcept;
+
+
+    /**
+    * @brief allow device by adding a new USBGuard rule.
+    * as in this PoC 2 methods of doing so are presented
+    * (IPC and system command), this method contains code
+    * shared by both solutions, and calls one. (the other is commented)
+    * called when "allow" action is pressed.
+
+    * @param notification notification object, to dismiss it after click.
+    * @param action unused.
+    * @param user_data struct with the rule to add and IPC client.
+    */
+    static void allowDeviceActionCallback(NotifyNotification* notification,
+        char* action, gpointer user_data);
+
+
+    /**
+    * @brief adds new allow rule with the usbguard command from a subshell.
+    * uses pkexec to elevate privileges.
+    *
+    * @param rule the rule to add to configuration.
+    * @param isPermanent keep rule for the session or forever.
+    */
+    static void allowDeviceSystemCommand(usbguard::Rule& rule, bool isPermanent);
+
+    /**
+    * @brief adds new allow rule with the usbguard IPC client.
+    * client must have the rights to modify USBGuard policy
+    *
+    * @param AllowDeviceActionData struct object with the rule and IPC client.
+    * @param isPermanent keep rule for the session or forever.
+    */
+    static void allowDeviceNotifierIPC(AllowDeviceActionData* data,
+        bool isPermanent);
 
     /**
      * @brief Sets the category of this notification.

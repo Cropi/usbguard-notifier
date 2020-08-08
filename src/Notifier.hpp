@@ -26,6 +26,9 @@
 #include <usbguard/ConfigFile.hpp>
 #include <usbguard/IPCClient.hpp>
 
+#include <thread>
+#include <mutex>
+
 namespace usbguardNotifier
 {
 
@@ -33,6 +36,7 @@ class Notifier : public usbguard::IPCClient
 {
 public:
     explicit Notifier(const std::string& app_name);
+    ~Notifier();
 
     void DevicePolicyChanged(
         uint32_t id,
@@ -53,8 +57,31 @@ public:
             const std::string& value_new);
     */
 private:
+    struct DevicePresenceInfo {
+        bool isInitialized = false;
+        usbguard::DeviceManager::EventType event;
+        usbguard::Rule::Target target;
+        std::string device_rule;
+
+        DevicePresenceInfo(const usbguard::DeviceManager::EventType& e,
+            const usbguard::Rule::Target& t,
+            const std::string& r): isInitialized(true), event(e), target(t), device_rule(r) {}
+
+        DevicePresenceInfo() : event(), target(), device_rule() {}
+    };
+
+    DevicePresenceInfo getDevicePresenceObject(uint32_t id);
+
+    void sendDevicePresenceCountdownCallback(uint32_t id);
+
+    void sendDevicePresenceNotification(DevicePresenceInfo& info);
+
     notify::Notify _lib;
     Serializer _ser;
+    std::map<uint32_t, DevicePresenceInfo> deviceNotifications;
+    std::mutex mtx;
+    std::vector<std::thread*> countdownThreads;
+    int millisecondsDevicePolicyWait = 500;
 };
 
 } // namespace usbguardNotifier

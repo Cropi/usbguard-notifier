@@ -4,12 +4,12 @@ services:
     - docker
 
 before_install:
-    - docker pull fedora:30
+    - docker pull fedora:32
 
 script:
     - >
-      docker run -v $TRAVIS_BUILD_DIR/:/root/build/ fedora:rawhide
-      /bin/sh -c "cd /root/build; cd usbguard-notifier; dnf install
+      docker run -v $TRAVIS_BUILD_DIR/:/root/build/ fedora:32
+      /bin/sh -c "cd /root/build; dnf install
       --nogpgcheck -y librsvg2-devel libnotify-devel usbguard-devel
       autoconf automake libtool make gcc-c++ asciidoc git && ./autogen.sh
       && ./configure --prefix /home/$(id -un) --with-bundled-catch && make"

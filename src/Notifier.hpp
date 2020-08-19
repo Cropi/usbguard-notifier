@@ -78,10 +78,10 @@ private:
 
     notify::Notify _lib;
     Serializer _ser;
-    std::map<uint32_t, DevicePresenceInfo> deviceNotifications;
-    std::mutex mtx;
-    std::vector<std::thread*> countdownThreads;
-    int millisecondsDevicePolicyWait = 500;
+    std::map<uint32_t, DevicePresenceInfo> _deviceNotifications;
+    std::mutex _mtx;
+    std::vector<std::thread*> _countdownThreads;
+    const int _kMillisecondsDevicePolicyWait = 500;
 };
 
 } // namespace usbguardNotifier

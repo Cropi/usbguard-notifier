@@ -44,7 +44,7 @@ Notifier::Notifier(const std::string& app_name) :
 
 Notifier::~Notifier()
 {
-    for (auto t : countdownThreads) {
+    for (auto t : _countdownThreads) {
         t->join();
         delete t;
     }
@@ -101,27 +101,27 @@ void Notifier::DevicePresenceChanged(
     using namespace usbguard;
     NOTIFIER_LOG() << "Device presence changed signal";
 
-    deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(event, target, device_rule)));
+    _deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(event, target, device_rule)));
     std::thread* t = new std::thread( [this, id] { sendDevicePresenceCountdownCallback(id); } );
-    countdownThreads.push_back(t);
+    _countdownThreads.push_back(t);
 }
 
 Notifier::DevicePresenceInfo Notifier::getDevicePresenceObject(uint32_t id)
 {
     DevicePresenceInfo info;
-    mtx.lock();
-    auto it = deviceNotifications.find(id);
-    if (it != deviceNotifications.end()) {
+    _mtx.lock();
+    auto it = _deviceNotifications.find(id);
+    if (it != _deviceNotifications.end()) {
         info = it->second;
-        deviceNotifications.erase(it);
+        _deviceNotifications.erase(it);
     }
-    mtx.unlock();
+    _mtx.unlock();
     return info;
 }
 
 void Notifier::sendDevicePresenceCountdownCallback(uint32_t id)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(millisecondsDevicePolicyWait));
+    std::this_thread::sleep_for(std::chrono::milliseconds(_kMillisecondsDevicePolicyWait));
 
     DevicePresenceInfo info = getDevicePresenceObject(id);
     if (info.isInitialized) {

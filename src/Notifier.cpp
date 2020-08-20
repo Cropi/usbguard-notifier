@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <string>
 #include <unistd.h>
+#include <chrono>
 
 #include <usbguard/DeviceManager.hpp>
 #include <usbguard/Rule.hpp>
@@ -41,6 +42,14 @@ Notifier::Notifier(const std::string& app_name) :
     _ser.setFileName(path);
 }
 
+Notifier::~Notifier()
+{
+    for (auto t : _countdownThreads) {
+        t->join();
+        delete t;
+    }
+}
+
 void Notifier::DevicePolicyChanged(
     uint32_t id,
     usbguard::Rule::Target target_old,
@@ -53,6 +62,20 @@ void Notifier::DevicePolicyChanged(
 
     const std::string target_old_str = Rule::targetToString(target_old);
     const std::string target_new_str = Rule::targetToString(target_new);
+
+    DevicePresenceInfo info = getDevicePresenceObject(id);
+    if (info.isInitialized) {
+        if (info.target == target_old ||
+            device_rule.substr(target_new_str.size()) == info.device_rule.substr(target_old_str.size())) {
+            info.target = target_new;
+            sendDevicePresenceNotification(info);
+            return;
+        } else {
+            NOTIFIER_LOG() << "DevicePolicyChanged and DevicePresenceChanged " <<
+                "with same id do not share the same rule.";
+        }
+    }
+
     Rule rule = Rule::fromString(device_rule);
 
     std::ostringstream body;
@@ -70,7 +93,7 @@ void Notifier::DevicePolicyChanged(
 }
 
 void Notifier::DevicePresenceChanged(
-    uint32_t /*id*/,
+    uint32_t id,
     usbguard::DeviceManager::EventType event,
     usbguard::Rule::Target target,
     const std::string& device_rule)
@@ -78,9 +101,41 @@ void Notifier::DevicePresenceChanged(
     using namespace usbguard;
     NOTIFIER_LOG() << "Device presence changed signal";
 
-    const std::string event_str = DeviceManager::eventTypeToString(event);
-    const std::string target_str = Rule::targetToString(target);
-    Rule rule = Rule::fromString(device_rule);
+    _deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(event, target, device_rule)));
+    std::thread* t = new std::thread( [this, id] { sendDevicePresenceCountdownCallback(id); } );
+    _countdownThreads.push_back(t);
+}
+
+Notifier::DevicePresenceInfo Notifier::getDevicePresenceObject(uint32_t id)
+{
+    DevicePresenceInfo info;
+    _mtx.lock();
+    auto it = _deviceNotifications.find(id);
+    if (it != _deviceNotifications.end()) {
+        info = it->second;
+        _deviceNotifications.erase(it);
+    }
+    _mtx.unlock();
+    return info;
+}
+
+void Notifier::sendDevicePresenceCountdownCallback(uint32_t id)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(_kMillisecondsDevicePolicyWait));
+
+    DevicePresenceInfo info = getDevicePresenceObject(id);
+    if (info.isInitialized) {
+        sendDevicePresenceNotification(info);
+    }
+}
+
+void Notifier::sendDevicePresenceNotification(DevicePresenceInfo& info)
+{
+    using namespace usbguard;
+
+    const std::string event_str = DeviceManager::eventTypeToString(info.event);
+    const std::string target_str = Rule::targetToString(info.target);
+    Rule rule = Rule::fromString(info.device_rule);
 
     std::ostringstream body;
     body << event_str << ' ' << rule.getName() << ": " << target_str;

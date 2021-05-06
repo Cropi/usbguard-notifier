@@ -1,0 +1,48 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master, CI ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install dependencies for usbguard
+      run: |
+        sudo apt-get -qq update
+        sudo apt-get install -y libudev-dev libsodium-dev libqb-dev libcap-ng-dev libseccomp-dev
+        sudo apt-get install -y libglib2.0-dev libdbus-glib-1-dev libxml2-utils libpolkit-gobject-1-dev xsltproc
+        sudo apt-get install -y libprotobuf-dev protobuf-compiler
+        sudo apt-get install -y asciidoc docbook-xml docbook-xsl
+        sudo apt-get install -y umockdev libumockdev-dev
+        sudo apt-get install -y gcc g++
+        sudo apt-get install -y libgcrypt-dev
+
+    - name: build usbguard
+      run: |
+        git clone https://github.com/USBGuard/usbguard.git
+        pushd usbguard
+        ./autogen.sh
+        CC=gcc CXX=g++ ./configure --with-bundled-catch --with-bundled-pegtl --with-crypto-library=gcrypt
+        make
+        popd
+
+    - name: install dependencies for usbguard-notifier
+      run: |
+        sudo apt-get -qq update
+        sudo apt-get install -y librsvg2-dev libnotify-dev autoconf automake libtool make g++ asciidoc git
+
+    - name: build usbguard-notifier
+      run: |
+        ./autogen.sh
+        ./configure --disable-silent-rules --with-bundled-catch --disable-notifier-cli --prefix /home/$(id -un) --with-usbguard-devel="./usbguard"
+        make
+        make install SYSTEMD_UNIT_DIR=/home/$(id -un)/.config/systemd/user/
+        make dist

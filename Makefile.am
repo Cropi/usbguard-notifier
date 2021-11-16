@@ -35,6 +35,7 @@ EXTRA_DIST = \
 	src/ThirdParty/Catch2/single_include/catch2
 
 usbguard_notifier_SOURCES = \
+	src/usbguard-icon.hpp \
 	src/Notifier.hpp \
 	src/NotifyWrapper.hpp \
 	src/Serializer.hpp \
@@ -43,8 +44,7 @@ usbguard_notifier_SOURCES = \
 	src/Notifier.cpp \
 	src/NotifyWrapper.cpp \
 	src/Serializer.cpp \
-	src/Log.cpp \
-	icons/usbguard-icon.svg
+	src/Log.cpp
 
 usbguard_notifier_LDFLAGS = \
 	@rsvg_LIBS@ \
@@ -65,7 +65,8 @@ usbguard_notifier_cli_LDADD = \
 endif
 
 BUILT_SOURCES = \
-	src/BuildConfig.h
+	src/BuildConfig.h \
+	src/usbguard-icon.hpp
 
 usbguard_notifier_cli_SOURCES = \
 	src/Serializer.hpp \
@@ -109,8 +110,16 @@ EXTRA_DIST += \
 #
 # usbguard icon
 #
-.svg.o:
-	$(LD) -r -b binary -o $@ $<
+EXTRA_DIST += \
+	$(top_builddir)/icons/usbguard-icon.svg
+
+$(top_builddir)/src/usbguard-icon.hpp: $(top_builddir)/icons/usbguard-icon.svg
+	echo -e "#ifndef ICON_HPP\n#define ICON_HPP\nnamespace notify {\nconst char *icon =" > $@
+	$(SED) 's/"/\\"/g' $^ | $(SED) 's/^/"/' | $(SED) 's/$$/\\n"/' >> $@
+	echo -e ";\n}\n#endif" >> $@
+
+CLEANFILES += \
+	$(top_builddir)/src/usbguard-icon.hpp
 
 #
 # unit file

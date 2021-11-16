@@ -18,13 +18,12 @@
  */
 
 #include "NotifyWrapper.hpp"
+#include "usbguard-icon.hpp"
 
+#include <cstring>
 #include <stdexcept>
 
 #include <librsvg-2.0/librsvg/rsvg.h>
-
-extern char _binary_icons_usbguard_icon_svg_start[];
-extern char _binary_icons_usbguard_icon_svg_end[];
 
 namespace notify
 {
@@ -54,10 +53,7 @@ void Notify::setAppName(const std::string& app_name)
 Notification::Notification(const std::string& summary, const std::string& body)
     : _n(notify_notification_new(summary.c_str(), body.c_str(), nullptr))
 {
-    RsvgHandle* handle = rsvg_handle_new_from_data(
-            (const guint8*)(_binary_icons_usbguard_icon_svg_start),
-            _binary_icons_usbguard_icon_svg_end - _binary_icons_usbguard_icon_svg_start,
-            nullptr);
+    RsvgHandle* handle = rsvg_handle_new_from_data((const guint8*)icon, std::strlen(icon), nullptr);
     if (!handle) {
         throw std::runtime_error("Failed to obtain rsvg handle");
     }

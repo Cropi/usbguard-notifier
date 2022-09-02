@@ -26,6 +26,7 @@
 #include <string>
 #include <unistd.h>
 #include <chrono>
+#include <iostream>
 
 #include <usbguard/DeviceManager.hpp>
 #include <usbguard/Rule.hpp>
@@ -40,6 +41,13 @@ Notifier::Notifier(const std::string& app_name) :
     std::string login = getlogin() ? getlogin() : "unknown";
     std::string path(std::string(NOTIFICATION_DIR) + "/" + login);
     _ser.setFileName(path);
+
+    // g_mail_loop is required by action's callback
+    _GMLoop = g_main_loop_new(nullptr, FALSE);
+    _GMLoopThread = new std::thread( [this] { g_main_loop_run(_GMLoop); } );
+
+    _actionsCallbackUserData.object_ptr = this;
+    _actionsCallbackUserData.info = nullptr;
 }
 
 Notifier::~Notifier()
@@ -48,6 +56,9 @@ Notifier::~Notifier()
         t->join();
         delete t;
     }
+
+    g_main_loop_quit(_GMLoop);
+    delete _GMLoopThread;
 }
 
 void Notifier::DevicePolicyChanged(
@@ -79,9 +90,9 @@ void Notifier::DevicePolicyChanged(
     Rule rule = Rule::fromString(device_rule);
 
     std::ostringstream body;
-    body << rule.getName() << ": " << target_new_str;
+    body << rule.getName() << ": " << target_new_str << "ed";
 
-    notify::Notification n("USBGuard", body.str());
+    notify::Notification n("Update - USBGuard", body.str());
     if (!n.show()) {
         throw std::runtime_error("Failed to show notification");
     }
@@ -101,7 +112,7 @@ void Notifier::DevicePresenceChanged(
     using namespace usbguard;
     NOTIFIER_LOG() << "Device presence changed signal";
 
-    _deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(event, target, device_rule)));
+    _deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(id, event, target, device_rule)));
     std::thread* t = new std::thread( [this, id] { sendDevicePresenceCountdownCallback(id); } );
     _countdownThreads.push_back(t);
 }
@@ -138,15 +149,68 @@ void Notifier::sendDevicePresenceNotification(DevicePresenceInfo& info)
     Rule rule = Rule::fromString(info.device_rule);
 
     std::ostringstream body;
-    body << event_str << ' ' << rule.getName() << ": " << target_str;
+    if (info.event == DeviceManager::EventType::Remove) {
+        body << rule.getName();
+    } else {
+        body << rule.getName() << ": " << target_str << "ed";
+    }
 
-    notify::Notification n("USBGuard", body.str());
+    notify::Notification n(event_str + " - USBGuard", body.str());
     n.setTimeout(5000);
     n.setCategory("device");
+
+    if (info.event == DeviceManager::EventType::Insert) {
+        _actionsCallbackUserData.info = &info;
+        if (info.target != Rule::Target::Allow) {
+            n.addAction("allow", "Allow",
+                &Notifier::actionsCallbackWrapper,
+                &_actionsCallbackUserData);
+        }
+        n.addAction("reject", "Reject",
+            &Notifier::actionsCallbackWrapper,
+            &_actionsCallbackUserData);
+    }
+
     if (!n.show()) {
         throw std::runtime_error("Failed to show notification");
     }
     // TODO serialize
+}
+
+void Notifier::actionsCallback(std::string action_id, DevicePresenceInfo* info)
+{
+    using namespace usbguard;
+
+    try {
+        if (action_id == "allow") {
+            IPCClient::applyDevicePolicy(info->id, usbguard::Rule::Target::Allow, false);
+        } else if (action_id == "reject") {
+            IPCClient::applyDevicePolicy(info->id, usbguard::Rule::Target::Reject, false);
+        }
+        NOTIFIER_LOG() << "Device Policy '" << action_id
+            << "' applied to device with ID: " << info->id;
+    } catch (const usbguard::IPCException& ex) {
+        std::cerr << "IPC call failed while trying to apply device policy"
+            << " '" << action_id << "' over device with ID " << info->id
+            << " with message:" << std::endl;
+        std::cerr << ex.message() << std::endl;
+    } catch (const std::exception& ex) {
+        std::cerr << "IPC call failed while trying to apply device policy"
+            << " '" << action_id << "' over device with ID " << info->id
+            << " with message:" << std::endl;
+        std::cerr << ex.what() << std::endl;
+    }
+}
+
+void Notifier::actionsCallbackWrapper(NotifyNotification* n __attribute__((unused)), char* action, gpointer user_data)
+{
+    using namespace usbguardNotifier;
+
+    // Cast struct here for better readability
+    auto ud = static_cast<Notifier::ActionsCallbackUserData*>(user_data);
+
+    // Call member callback
+    ud->object_ptr->actionsCallback(action, ud->info);
 }
 
 } // namespace usbguardNotifier

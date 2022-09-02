@@ -92,4 +92,14 @@ bool Notification::close() const
     return notify_notification_close(_n, nullptr);
 }
 
+void Notification::addAction(
+    const std::string& action,
+    const std::string& label,
+    void (*callback)(NotifyNotification*, char*, gpointer),
+    gpointer user_data) noexcept
+{
+    notify_notification_add_action(_n, action.c_str(), label.c_str(),
+        (NotifyActionCallback)callback, user_data, NULL);
+}
+
 } // namespace notify

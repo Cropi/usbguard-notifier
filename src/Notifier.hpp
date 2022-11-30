@@ -110,7 +110,7 @@ private:
 
     void sendDevicePresenceNotification(DevicePresenceInfo& info);
 
-    void actionsCallback(std::string action_id, DevicePresenceInfo* info);
+    void actionsCallback(const std::string& action_id, DevicePresenceInfo* info);
 
     notify::Notify _lib;
     Serializer _ser;

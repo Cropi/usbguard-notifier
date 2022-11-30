@@ -177,14 +177,14 @@ void Notifier::sendDevicePresenceNotification(DevicePresenceInfo& info)
     // TODO serialize
 }
 
-void Notifier::actionsCallback(std::string action_id, DevicePresenceInfo* info)
+void Notifier::actionsCallback(const std::string& action_id, DevicePresenceInfo* info)
 {
     using namespace usbguard;
 
     try {
-        if (action_id == "allow") {
+        if (Rule::targetFromString(action_id)  == Rule::Target::Allow) {
             IPCClient::applyDevicePolicy(info->id, usbguard::Rule::Target::Allow, false);
-        } else if (action_id == "reject") {
+        } else if (Rule::targetFromString(action_id)  == Rule::Target::Reject) {
             IPCClient::applyDevicePolicy(info->id, usbguard::Rule::Target::Reject, false);
         }
         NOTIFIER_LOG() << "Device Policy '" << action_id

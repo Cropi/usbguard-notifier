@@ -163,11 +163,11 @@ void Notifier::sendDevicePresenceNotification(DevicePresenceInfo& info)
     if (info.event == DeviceManager::EventType::Insert) {
         _actionsCallbackUserData.info = &info;
         if (info.target != Rule::Target::Allow) {
-            n.addAction("allow", "Allow",
+            n.addAction(Rule::targetToString(Rule::Target::Allow), "Allow",
                 &Notifier::actionsCallbackWrapper,
                 &_actionsCallbackUserData);
         }
-        n.addAction("reject", "Reject",
+        n.addAction(Rule::targetToString(Rule::Target::Reject), "Reject",
             &Notifier::actionsCallbackWrapper,
             &_actionsCallbackUserData);
     }

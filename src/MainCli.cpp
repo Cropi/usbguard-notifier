@@ -70,7 +70,7 @@ int main(int argc, char** argv)
         map = serializer.deserializeAll();
     } catch (std::runtime_error& e) {
         std::cerr << "Error: file " << notification_path
-            << " doesnt exist." << std::endl;
+            << " doesn't exist." << std::endl;
         return EXIT_FAILURE;
     }
     if (map.empty()) {

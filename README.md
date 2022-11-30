@@ -1,6 +1,5 @@
 # USBGuard Notifier
 
-[![Build Status](https://travis-ci.org/Cropi/usbguard-notifier.svg?branch=master)](https://travis-ci.org/Cropi/usbguard-notifier)
 [![License](https://img.shields.io/github/license/Cropi/usbguard-notifier.svg)](LICENSE)
 
 ### About

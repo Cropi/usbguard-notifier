@@ -58,6 +58,7 @@ Notifier::~Notifier()
     }
 
     g_main_loop_quit(_GMLoop);
+    _GMLoopThread->join();
     delete _GMLoopThread;
 }
 

@@ -56,18 +56,52 @@ public:
             const std::string& value_old,
             const std::string& value_new);
     */
+
+    /**
+     * @brief Notification action's C-style callback
+     * This callback later calls private method 'actionsCallback' which is the "desired"
+     * callback as it can access class members.
+     *
+     * @see \link notify::Notification::addAction addAction\endlink
+     *
+     * @param n Not in use. Imposed by libnotify API.
+     * @param action Action ID.
+     * @param user_data Pointer to _actionsCallbackUserData in an object instance.
+     */
+    static void actionsCallbackWrapper(
+        NotifyNotification* n,
+        char* action,
+        gpointer user_data);
+
 private:
     struct DevicePresenceInfo {
         bool isInitialized = false;
+        uint32_t id;
         usbguard::DeviceManager::EventType event;
         usbguard::Rule::Target target;
         std::string device_rule;
 
-        DevicePresenceInfo(const usbguard::DeviceManager::EventType& e,
+        DevicePresenceInfo(const uint32_t id,
+            const usbguard::DeviceManager::EventType& e,
             const usbguard::Rule::Target& t,
-            const std::string& r): isInitialized(true), event(e), target(t), device_rule(r) {}
+            const std::string& r): isInitialized(true), id(id), event(e), target(t), device_rule(r) {}
 
-        DevicePresenceInfo() : event(), target(), device_rule() {}
+        DevicePresenceInfo() : id(0), event(), target(), device_rule() {}
+    };
+
+    /**
+     * @brief Structure passed as argument in notification action's callback.
+     *
+     * @see \link Notification::addAction addAction\endlink
+     * @see \link Notifier::actionsCallback actionsCallback\endlink
+     */
+    struct ActionsCallbackUserData {
+        Notifier* object_ptr; /**< Reference to class instance. */
+        DevicePresenceInfo* info; /**< Device information needed by \link actionsCallback actionsCallback\endlink method. */
+
+        ActionsCallbackUserData(Notifier* ctx, DevicePresenceInfo* info) : object_ptr(ctx), info(info) {};
+
+        ActionsCallbackUserData() : object_ptr(nullptr), info(nullptr) {};
     };
 
     DevicePresenceInfo getDevicePresenceObject(uint32_t id);
@@ -76,12 +110,19 @@ private:
 
     void sendDevicePresenceNotification(DevicePresenceInfo& info);
 
+    void actionsCallback(const std::string& action_id, DevicePresenceInfo* info);
+
     notify::Notify _lib;
     Serializer _ser;
     std::map<uint32_t, DevicePresenceInfo> _deviceNotifications;
     std::mutex _mtx;
     std::vector<std::thread*> _countdownThreads;
     const int _kMillisecondsDevicePolicyWait = 500;
+
+    GMainLoop* _GMLoop;
+    std::thread* _GMLoopThread;
+
+    ActionsCallbackUserData _actionsCallbackUserData;
 };
 
 } // namespace usbguardNotifier

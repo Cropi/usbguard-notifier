@@ -117,6 +117,24 @@ public:
     void setUrgency(Urgency urgency) noexcept;
 
     /**
+     * @brief Adds an action to the notification.
+     *
+     * libnotify uses a C-style callback so this type is needed as an argument.
+     * A static function is needed for this callback to work.
+     *
+     * @param action The action ID.
+     * @param label Human-readable action label. Shown in the notification.
+     * @param callback C-style callback as defined by libnotify.
+     * Callback parameter 'n' should not be used; 'action' and 'user_data' are the same.
+     * @param user_data Optional custom data to pass to callback.
+     */
+    void addAction(
+        const std::string& action,
+        const std::string& label,
+        void (*callback)(NotifyNotification* n, char* action, gpointer user_data),
+        gpointer user_data) noexcept;
+
+    /**
      * @brief Synchronously tells the notification server
      * to hide the notification on the screen.
      *

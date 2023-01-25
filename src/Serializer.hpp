@@ -20,6 +20,7 @@
 #ifndef SERIALIZER_HPP
 #define SERIALIZER_HPP
 
+#include <cstdint>
 #include <fstream>
 #include <map>
 #include <string>

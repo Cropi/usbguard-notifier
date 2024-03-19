@@ -1,3 +1,8 @@
+### 0.1.1 - 2024-03-19
+
+## Fixed
+Fix compile with GCC 13
+
 ### 0.1.0 - 2022-12-19
 
 ## Added

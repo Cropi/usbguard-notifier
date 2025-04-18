@@ -138,13 +138,17 @@ if test "x$with_bundled_catch" = xyes; then
     catch_summary="bundled; $catch_CFLAGS $catch_LIBS"
 else
     SAVE_CPPFLAGS=$CPPFLAGS
-    CPPFLAGS="-std=c++11 $CPPFLAGS -I/usr/include/catch"
+    CPPFLAGS="-std=c++17 $CPPFLAGS -I/usr/include/catch2"
     AC_LANG_PUSH([C++])
-    AC_CHECK_HEADER([catch.hpp], [], [AC_MSG_FAILURE(catch.hpp not found or not
-        usable. Re-run with --with-bundled-catch to use the bundled library.)])
+	AC_CHECK_HEADER([catch_test_macros.hpp],
+	[catch_CFLAGS="-I/usr/include/catch2 -DHAVE_CATCH2_V3"
+	catch_LIBS="-lCatch2Main -lCatch2"],
+        [AC_CHECK_HEADER([catch.hpp],
+	[catch_CFLAGS="-I/usr/include/catch2"
+	catch_LIBS=""],
+        [AC_MSG_FAILURE(Catch2 not found or not usable. Re-run with --with-bundled-catch to use the bundled library.)]
+        )])
     AC_LANG_POP
-    catch_CFLAGS="-I/usr/include/catch"
-    catch_LIBS=""
     CPPFLAGS=$SAVE_CPPFLAGS
     catch_summary="system-wide;
     $catch_CFLAGS $catch_LIBS"
@@ -165,7 +169,7 @@ AC_ARG_ENABLE(
 )
 
 CXXFLAGS=" $EXTERNAL_CXXFLAGS"
-CXXFLAGS+=" -std=c++11"
+CXXFLAGS+=" -std=c++17"
 CXXFLAGS+=" -pedantic"
 CXXFLAGS+=" -Wno-unknown-pragmas"
 CXXFLAGS+=" -Wall"

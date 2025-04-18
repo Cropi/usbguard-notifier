@@ -43,3 +43,6 @@ test_unit_SOURCES=\
     ../NotifierCLI.cpp \
     ../Serializer.hpp \
     ../Serializer.cpp
+
+test_unit_LDADD = \
+    $(catch_LIBS)

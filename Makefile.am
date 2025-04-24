@@ -20,7 +20,6 @@
 ACLOCAL_AMFLAGS = -I m4
 CLEANFILES =
 
-SUBDIRS = src/Tests/
 bin_PROGRAMS = usbguard-notifier
 if NOTIFIER_CLI_ENABLED
 bin_PROGRAMS += \
@@ -31,8 +30,7 @@ EXTRA_DIST = \
 	src/BuildConfig.h.in \
 	README.md \
 	LICENSE \
-	CHANGELOG.md \
-	src/ThirdParty/Catch2/single_include/catch2
+	CHANGELOG.md
 
 usbguard_notifier_SOURCES = \
 	src/usbguard-icon.hpp \

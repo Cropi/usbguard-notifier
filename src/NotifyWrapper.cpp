@@ -69,7 +69,17 @@ bool Notification::update(const std::string& summary, const std::string& body)
 
 bool Notification::show() const
 {
-    return notify_notification_show(_n, nullptr);
+    GError* error = nullptr;
+    bool result = notify_notification_show(_n, &error);
+
+    if (!result && error) {
+        std::string error_msg = "Failed to show notification: ";
+        error_msg += error->message;
+        g_error_free(error);
+        throw std::runtime_error(error_msg);
+    }
+
+	return result;
 }
 
 void Notification::setTimeout(int timeout) noexcept

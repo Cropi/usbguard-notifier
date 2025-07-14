@@ -94,8 +94,12 @@ void Notifier::DevicePolicyChanged(
     body << rule.getName() << ": " << target_new_str << "ed";
 
     notify::Notification n("Update - USBGuard", body.str());
-    if (!n.show()) {
-        throw std::runtime_error("Failed to show notification");
+    try {
+        if (!n.show()) {
+            NOTIFIER_LOG() << "Failed to show notification (returned false)";
+        }
+    } catch (const std::exception& e) {
+        NOTIFIER_LOG() << "Failed to show notification: " << e.what();
     }
     NOTIFIER_LOG() << "Store notification";
     Notification obj = { __func__, id, rule.getName(), target_old_str,
@@ -172,8 +176,12 @@ void Notifier::sendDevicePresenceNotification(DevicePresenceInfo& info)
             &_actionsCallbackUserData);
     }
 
-    if (!n.show()) {
-        throw std::runtime_error("Failed to show notification");
+    try {
+        if (!n.show()) {
+            NOTIFIER_LOG() << "Failed to show notification (returned false)";
+        }
+    } catch (const std::exception& e) {
+        NOTIFIER_LOG() << "Failed to show notification: " << e.what();
     }
     // TODO serialize
 }

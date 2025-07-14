@@ -112,9 +112,9 @@ EXTRA_DIST += \
 	$(top_builddir)/icons/usbguard-icon.svg
 
 $(top_builddir)/src/usbguard-icon.hpp: $(top_builddir)/icons/usbguard-icon.svg
-	echo -e "#ifndef ICON_HPP\n#define ICON_HPP\nnamespace notify {\nconst char *icon =" > $@
+	printf "#ifndef ICON_HPP\n#define ICON_HPP\nnamespace notify {\nconst char *icon =" > $@
 	$(SED) 's/"/\\"/g' $^ | $(SED) 's/^/"/' | $(SED) 's/$$/\\n"/' >> $@
-	echo -e ";\n}\n#endif" >> $@
+	printf ";\n}\n#endif" >> $@
 
 CLEANFILES += \
 	$(top_builddir)/src/usbguard-icon.hpp

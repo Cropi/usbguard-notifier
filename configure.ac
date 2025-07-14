@@ -140,11 +140,11 @@ AC_ARG_ENABLE(
 )
 
 CXXFLAGS=" $EXTERNAL_CXXFLAGS"
-CXXFLAGS+=" -std=c++11"
-CXXFLAGS+=" -pedantic"
-CXXFLAGS+=" -Wno-unknown-pragmas"
-CXXFLAGS+=" -Wall"
-CXXFLAGS+=" -Wextra"
+CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -pedantic"
+CXXFLAGS="$CXXFLAGS -Wno-unknown-pragmas"
+CXXFLAGS="$CXXFLAGS -Wall"
+CXXFLAGS="$CXXFLAGS -Wextra"
 
 if test "x$debug" = xyes; then
     CXXFLAGS="$CXXFLAGS $CXXFLAGS_DEBUG"

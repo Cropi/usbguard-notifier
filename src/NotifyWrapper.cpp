@@ -58,19 +58,21 @@ Notification::Notification(const std::string& summary, const std::string& body)
         throw std::runtime_error("Failed to obtain rsvg handle");
     }
     GdkPixbuf* pixbuf = rsvg_handle_get_pixbuf(handle);
-    notify_notification_set_image_from_pixbuf(_n, pixbuf);
+    notify_notification_set_image_from_pixbuf(_n.get(), pixbuf);
     g_object_unref(handle);
 }
 
+Notification::~Notification() = default;
+
 bool Notification::update(const std::string& summary, const std::string& body)
 {
-    return notify_notification_update(_n, summary.c_str(), body.c_str(), nullptr);
+    return notify_notification_update(_n.get(), summary.c_str(), body.c_str(), nullptr);
 }
 
 bool Notification::show() const
 {
     GError* error = nullptr;
-    bool result = notify_notification_show(_n, &error);
+    bool result = notify_notification_show(_n.get(), &error);
 
     if (!result && error) {
         std::string error_msg = "Failed to show notification: ";
@@ -84,22 +86,22 @@ bool Notification::show() const
 
 void Notification::setTimeout(int timeout) noexcept
 {
-    notify_notification_set_timeout(_n, timeout);
+    notify_notification_set_timeout(_n.get(), timeout);
 }
 
 void Notification::setCategory(const std::string& category) noexcept
 {
-    notify_notification_set_category(_n, category.c_str());
+    notify_notification_set_category(_n.get(), category.c_str());
 }
 
 void Notification::setUrgency(Urgency urgency) noexcept
 {
-    notify_notification_set_urgency(_n, (NotifyUrgency)urgency);
+    notify_notification_set_urgency(_n.get(), (NotifyUrgency)urgency);
 }
 
 bool Notification::close() const
 {
-    return notify_notification_close(_n, nullptr);
+    return notify_notification_close(_n.get(), nullptr);
 }
 
 void Notification::addAction(
@@ -108,7 +110,7 @@ void Notification::addAction(
     void (*callback)(NotifyNotification*, char*, gpointer),
     gpointer user_data) noexcept
 {
-    notify_notification_add_action(_n, action.c_str(), label.c_str(),
+    notify_notification_add_action(_n.get(), action.c_str(), label.c_str(),
         (NotifyActionCallback)callback, user_data, NULL);
 }
 

@@ -81,7 +81,7 @@ bool Notification::show() const
         throw std::runtime_error(error_msg);
     }
 
-	return result;
+    return result;
 }
 
 void Notification::setTimeout(int timeout) noexcept

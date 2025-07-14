@@ -55,7 +55,7 @@ Notifier::~Notifier()
     for (auto& t : _countdownThreads) {
         if (t.joinable()) {
             t.join();
-		}
+        }
     }
 
     g_main_loop_quit(_GMLoop.get());
@@ -86,7 +86,7 @@ void Notifier::DevicePolicyChanged(
             return;
         } else {
             NOTIFIER_LOG() << "DevicePolicyChanged and DevicePresenceChanged " <<
-                "with same id do not share the same rule.";
+                              "with same id do not share the same rule.";
         }
     }
 
@@ -120,7 +120,7 @@ void Notifier::DevicePresenceChanged(
     NOTIFIER_LOG() << "Device presence changed signal";
 
     _deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(id, event, target, device_rule)));
-	_countdownThreads.emplace_back([this, id] { sendDevicePresenceCountdownCallback(id); });
+    _countdownThreads.emplace_back([this, id] { sendDevicePresenceCountdownCallback(id); });
 }
 
 Notifier::DevicePresenceInfo Notifier::getDevicePresenceObject(uint32_t id)

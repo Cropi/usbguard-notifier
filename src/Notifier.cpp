@@ -126,13 +126,12 @@ void Notifier::DevicePresenceChanged(
 Notifier::DevicePresenceInfo Notifier::getDevicePresenceObject(uint32_t id)
 {
     DevicePresenceInfo info;
-    _mtx.lock();
+    std::lock_guard<std::mutex> lock(_mtx);
     auto it = _deviceNotifications.find(id);
     if (it != _deviceNotifications.end()) {
         info = it->second;
         _deviceNotifications.erase(it);
     }
-    _mtx.unlock();
     return info;
 }
 

@@ -42,9 +42,9 @@ Notifier::Notifier(const std::string& app_name) :
     std::string path(std::string(NOTIFICATION_DIR) + "/" + login);
     _ser.setFileName(path);
 
-    // g_mail_loop is required by action's callback
-    _GMLoop = g_main_loop_new(nullptr, FALSE);
-    _GMLoopThread = new std::thread( [this] { g_main_loop_run(_GMLoop); } );
+    // g_main_loop is required by action's callback
+    _GMLoop.reset(g_main_loop_new(nullptr, FALSE));
+    _GMLoopThread = std::thread([this] { g_main_loop_run(_GMLoop.get()); });
 
     _actionsCallbackUserData.object_ptr = this;
     _actionsCallbackUserData.info = nullptr;
@@ -52,14 +52,16 @@ Notifier::Notifier(const std::string& app_name) :
 
 Notifier::~Notifier()
 {
-    for (auto t : _countdownThreads) {
-        t->join();
-        delete t;
+    for (auto& t : _countdownThreads) {
+        if (t.joinable()) {
+            t.join();
+		}
     }
 
-    g_main_loop_quit(_GMLoop);
-    _GMLoopThread->join();
-    delete _GMLoopThread;
+    g_main_loop_quit(_GMLoop.get());
+    if (_GMLoopThread.joinable()) {
+        _GMLoopThread.join();
+    }
 }
 
 void Notifier::DevicePolicyChanged(
@@ -94,8 +96,12 @@ void Notifier::DevicePolicyChanged(
     body << rule.getName() << ": " << target_new_str << "ed";
 
     notify::Notification n("Update - USBGuard", body.str());
-    if (!n.show()) {
-        throw std::runtime_error("Failed to show notification");
+    try {
+        if (!n.show()) {
+            NOTIFIER_LOG() << "Failed to show notification (returned false)";
+        }
+    } catch (const std::exception& e) {
+        NOTIFIER_LOG() << "Failed to show notification: " << e.what();
     }
     NOTIFIER_LOG() << "Store notification";
     Notification obj = { __func__, id, rule.getName(), target_old_str,
@@ -114,8 +120,7 @@ void Notifier::DevicePresenceChanged(
     NOTIFIER_LOG() << "Device presence changed signal";
 
     _deviceNotifications.emplace(std::make_pair(id, DevicePresenceInfo(id, event, target, device_rule)));
-    std::thread* t = new std::thread( [this, id] { sendDevicePresenceCountdownCallback(id); } );
-    _countdownThreads.push_back(t);
+	_countdownThreads.emplace_back([this, id] { sendDevicePresenceCountdownCallback(id); });
 }
 
 Notifier::DevicePresenceInfo Notifier::getDevicePresenceObject(uint32_t id)
@@ -172,8 +177,12 @@ void Notifier::sendDevicePresenceNotification(DevicePresenceInfo& info)
             &_actionsCallbackUserData);
     }
 
-    if (!n.show()) {
-        throw std::runtime_error("Failed to show notification");
+    try {
+        if (!n.show()) {
+            NOTIFIER_LOG() << "Failed to show notification (returned false)";
+        }
+    } catch (const std::exception& e) {
+        NOTIFIER_LOG() << "Failed to show notification: " << e.what();
     }
     // TODO serialize
 }

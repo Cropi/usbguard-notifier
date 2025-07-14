@@ -1,6 +1,6 @@
-AC_PREREQ([2.69])
+AC_PREREQ([2.71])
 
-AC_INIT([usbguard-notifier], [0.1.0], [alakatos@redhat.com])
+AC_INIT([usbguard-notifier],[0.1.1],[alakatos@redhat.com])
 AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -15,15 +15,13 @@ AM_INIT_AUTOMAKE([foreign subdir-objects tar-pax])
 
 AC_PROG_MAKE_SET
 AC_PROG_CXX
-AC_PROG_CC_C99
+AC_PROG_CC
 
 AC_PROG_INSTALL
-AC_PROG_MAKE_SET
 LT_PREREQ([2.4.6])
 LT_INIT
 
 # Check for headers, typedefs, data structures
-AC_CHECK_HEADER_STDBOOL
 AC_C_INLINE
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
@@ -33,15 +31,15 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_CHECK_HEADERS([getopt.h unistd.h], [], [AC_MSG_ERROR([Required header file(s) not found])], [])
+AC_CHECK_HEADERS([stdbool.h getopt.h unistd.h], [], [AC_MSG_ERROR([Required header file(s) not found])], [])
 
-# As default each argument is stored temporiraly, however with this options it can be modified
+# As default each argument is stored temporarily, however with this option it can be modified
 notification_path="/tmp/usbguard-notifier"
 AC_ARG_WITH(
     [permanent-notifications],
     AS_HELP_STRING([--with-permanent-notifications], [Select notifications path]),
     [notification_path=$withval],
-    [notificaiton_path="/tmp/usbguard-notifier"]
+    [notification_path="/tmp/usbguard-notifier"]
 )
 
 # usbguard-devel
@@ -72,7 +70,7 @@ AC_ARG_WITH(
 
 # Build notifier-cli, default is yes
 AC_ARG_ENABLE([notifier-cli],
-    [AC_HELP_STRING([--enable-notifier-cli], [enable notifier cli(default=yes)])],
+    [AS_HELP_STRING([--enable-notifier-cli], [enable notifier cli(default=yes)])],
     [case "${enableval}" in
         yes) notifier_cli_enabled=yes;;
         no) notifier_cli_enabled=no;;
@@ -82,7 +80,7 @@ AC_ARG_ENABLE([notifier-cli],
 )
 
 AC_ARG_ENABLE([systemd-systemunitdir],
-    [AC_HELP_STRING([--enable-systemd-systemunitdir], [enable systemd system unit dir(default=no)])],
+    [AS_HELP_STRING([--enable-systemd-systemunitdir],[enable systemd system unit dir(default=no)])],
     [case "${enableval}" in
         yes) systemd_systemunitdir=yes;;
         no) systemd_systemunitdir=no;;
@@ -130,7 +128,7 @@ AM_CONDITIONAL([SYSTEMD_SUPPORT_ENABLED], [test "x$systemd" = xyes ])
 CXXFLAGS_DEBUG="-g -O2"
 AC_ARG_ENABLE(
     [debug-build],
-    [AC_HELP_STRING([--enable-debug-build], [enable debugging flags (default=no)])],
+    [AS_HELP_STRING([--enable-debug-build],[enable debugging flags (default=no)])],
     [case "${enableval}" in
         yes) debug=yes ;;
         no) debug=no ;;
@@ -140,7 +138,7 @@ AC_ARG_ENABLE(
 )
 
 CXXFLAGS=" $EXTERNAL_CXXFLAGS"
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++14"
 CXXFLAGS="$CXXFLAGS -pedantic"
 CXXFLAGS="$CXXFLAGS -Wno-unknown-pragmas"
 CXXFLAGS="$CXXFLAGS -Wall"
@@ -150,7 +148,7 @@ if test "x$debug" = xyes; then
     CXXFLAGS="$CXXFLAGS $CXXFLAGS_DEBUG"
 fi
 
-AC_SUBST(CPPFLAGS, $CXXFLAGS)
+AC_SUBST(CXXFLAGS, $CXXFLAGS)
 AC_SUBST(config_PATH, $prefix/.config)
 AC_SUBST(NOTIFICATION_PATH, $notification_path)
 

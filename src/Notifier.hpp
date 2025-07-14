@@ -116,11 +116,13 @@ private:
     Serializer _ser;
     std::map<uint32_t, DevicePresenceInfo> _deviceNotifications;
     std::mutex _mtx;
-    std::vector<std::thread*> _countdownThreads;
+    std::vector<std::thread> _countdownThreads;
     const int _kMillisecondsDevicePolicyWait = 500;
-
-    GMainLoop* _GMLoop;
-    std::thread* _GMLoopThread;
+    struct GMainLoopDeleter {
+        void operator()(GMainLoop* loop) const noexcept { if (loop) g_main_loop_unref(loop); }
+    };
+    std::unique_ptr<GMainLoop, GMainLoopDeleter> _GMLoop;
+    std::thread _GMLoopThread;
 
     ActionsCallbackUserData _actionsCallbackUserData;
 };

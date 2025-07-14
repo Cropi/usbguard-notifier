@@ -21,6 +21,7 @@
 #define NOTIFY_WRAPPER_HPP
 
 #include <string>
+#include <memory>
 
 #include <libnotify/notify.h>
 
@@ -70,7 +71,7 @@ public:
 
     Notification(const Notification&) = delete;
     Notification& operator=(const Notification&) = delete;
-    ~Notification() = default;
+    ~Notification();
 
     /**
      * @brief Updates the notification text.
@@ -143,7 +144,15 @@ public:
     bool close() const;
 
 private:
-    NotifyNotification* _n;
+    struct NotificationDeleter {
+        void operator()(NotifyNotification* n) const noexcept
+        {
+            if (n) {
+                g_object_unref(G_OBJECT(n));
+            }
+        }
+    };
+    std::unique_ptr<NotifyNotification, NotificationDeleter> _n;
 };
 
 } // namespace notify

@@ -14,7 +14,7 @@ In order to compile the sources from a tarball/zip you will need the following d
 * [asciidoc](https://github.com/asciidoc/asciidoc)
 
 
-### Instalation
+### Installation
 
 It is pretty easy to install the USBGuard Notifier. There are two possibilities how to install it:
 * per user (locally)

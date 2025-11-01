@@ -21,7 +21,7 @@ It is pretty easy to install the USBGuard Notifier. There are two possibilities 
 ```
 $  ./autogen.sh
 ```
-Now you can choose if you would like to store the notifications temporarily(until reboot):
+Now you can choose if you would like to store the notifications temporarily (until reboot):
 ```
 $  ./configure --prefix /home/$(id -un)
 ```

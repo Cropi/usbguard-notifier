@@ -1,9 +1,10 @@
 [Unit]
 Description=USBGuard Notifier
 After=usbguard.service
+PartOf=graphical-session.target
 
 [Service]
 ExecStart=%bindir%/usbguard-notifier
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
